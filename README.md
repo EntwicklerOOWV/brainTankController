@@ -2,10 +2,8 @@
 
 Willkommen in der Dokumentation für das OOWV Smart Watertank Controller Repository. Hier erfährst du alles, was du über den Controller zur Steuerung des intelligenten Wassertanks wissen musst.
 
-
-
 ## Hardware
-### Controller
+#### Controller
 
 Folgende Hardware-Komponenten werden für den Controller benötigt:
 
@@ -16,7 +14,7 @@ https://www.amazon.de/dp/B06XFZC3BX
 https://www.amazon.de/dp/B08GY9NYRM
 
 - 1-Kanal Relais (3V): Für die Schaltung von Geräten.
-https://www.amazon.de/dp/B078Q326KT?th=1
+https://www.amazon.de/dp/B078Q326KT
 
 - 1 x Aufwärtswandler (3V-32V zu 5V-35V): Zur Spannungsanpassung.
 https://www.amazon.de/dp/B00HV59922
@@ -36,7 +34,7 @@ https://www.amazon.de/dp/B07TWLG37N
 
 - Verteilerdose zum verstauen der Hardware-Komponenten
 
-### Wassertank
+#### Wassertank
 
 - 1000L IBC Container
 https://www.rekubik.de/ibc-container/neue-ibc/1000l-ibc-container-rebottled-food-auf-stahlpalette-neuwertig?number=RK50122
@@ -46,59 +44,6 @@ https://www.rekubik.de/ibc-zubehoer/adapter/s60x6-grobgewinde/ibc-adapter-s60x6-
 
 - Motorkugelhahnventil
 https://www.amazon.de/dp/B07V2VX76C
-
-<pre>
-</pre>
-
-### Aufbau der Hardware
-
-Für die Konstruktion des Controllers werden neben den Komponenten noch weiteres Werkzeug und Bauteile benötigt:
-- Lötkolben und Lötzinn
-- Kabel und Lüsterklemmen
-- Aderendhülsen und Crimpzange
-- Multimeter
-
-#### Controller
-
-Zu Beginn empfiehlt es sich die Komponenten lose in der Dose anzuordnen und anschließend zB. mit einer Heißklebe Pistole zu befestigen.
-Alternativ können die Komponenten vorher auch auf einem Perfboard verlötet und dieses anschließend in der Dose befestigt werden.
-Einige Komponenten müssen vorher noch mit der jeweils mitgelieferten Stifleiste verlötet werden, damit Kabel an die jeweiligen Pins angeschlossen werden können.
-Anschließend können die Öffnungskappen der Dose für den Stecker des Netzteils sowie Kabel des Ventils und Wassersensors entfernt und die Kabel bzw. Stecker in den Öffnungen befestigt werden.
-
-Danach können die Kompononenten nach dem Schaltplan miteinander verkabelt werden.
-
-![Schaltplan 1 mit Stromzufuhr über USB](./docs/oowv-schaltplan-labeled.png)
-
-![Schaltplan 2 mit Stromzufuhr über Netzteil](./docs/schaltplan-3-labeled.png)
-
-![Die verkabelten Komponenten](./docs/wired.png)
-
-#### Stromversorgung
-Wie in Schaltplan 1 zu sehen wird der Raspbery Pi über ein Micro USB Kabel mit Strom versorgt. Dieses Kabel kann für die Entwicklung zwar an einen Laptop angeschlossen werden, sobald der Controller allerdings im Freien steht, sollte der Pi entweder über ein Batteriepack oder wie in Schaltplan 2 zu sehen über das 24V Netzteil mit Strom versorgt werden.
-Mittels des Aufwärtswandlers muss dann die 24V Spannung des Netzteils auf die benötigte 5V Micro USB Spannung heruntergeregelt werden. An die Plus und Minus Pins des Wandlers müssen dann noch die Ground (schwarz) und VCC(rot) Kabel des Micro USB Kabels angeschlossen werden.
-
-#### Aufwärtswandler
-Für Schaltplan 1 muss die 5V Spannung des Pis auf eine 24V Spannung für den Messsensor umgewandelt werden.
-Für Schaltplan 2 muss die 24V Ausgangsspannung des Netzteils auf eine 5V Spannung für den Micro USB Anschluss heruntergeregelt werden. 
-Dies geschieht durch Drehen des kleinen Rädchens auf dem Modul.
-
-#### Strom zu Spannungswandler
-Mittels des Spannungswandlers wird der Strom des Wassersensors in eine Spannung umgewandelt. Desweiteren kann über den Wandler ein Spannungsmaximum,für den gefüllten Tank und ein Spannungsminimum für einen leeren Tank eingestellt werden.
-Beim Spannungswandler geschieht dies ebenfalls über die Drehrädchen auf dem Modul. Während sich das Spannungsminimum sehr leicht simulieren lässt indem der Wassersensor nicht eingetaucht ist und somit über das ZERO Rädchen auf ein Spannungsminimum von 0V eingestellt werden kann, muss für das Spannungsmaximum der Wassersensor vollständig in Wasser eingetaucht werden. Dafür legt man den Wassersensor in ein Kunststoffrohr (HT-Rohr) und befüllt dieses auf 1 Meter mit Wasser. Anschließend kann über das SPAN Rädchen das Spannungsmaximum auf 3,3V eingestellt werden. 
-Zur Überprüfung der Spannungen empfiehlt sich hier die Verwendung eines Multimeters indem man den Spannungsabfall auf dem Spannungswandler zwischen GND und VOUT misst.
-
-![Die verkabelten Komponenten in der Verteilerdose](./docs/box-wired.png)
-
-![Der vollständige Controller mit Sensor und Ventil](./docs/closed-controller.png)
-
-
-#### Wassertank
-- Installation des Sensors
-
-- Installation des Ventils
-
-<pre>
-</pre>
 
 ## Installation
 
@@ -121,7 +66,7 @@ ssh <benutzername>@<raspberrypi-netzwerk-ip>
 ```
 
 #### Visual Studio Code und SSH FS
-Um mittels Visual Studio Code auf den Pi zuzugreifen empfiehlt sich die Erweiterung "FS SSH". Diese bietet eine grafische Benutzeroberfläche welche die Installation und Handhabung der Dateien auf dem Pi erleichtert. Die Erweiterung kann in VSCode über den Tab Erweiterungen installiert werden.
+Um mittels Visual Studio Code auf den Pi zuzugreifen, kann die Erweiterung "FS SSH" genutzt werden. Diese bietet eine grafische Benutzeroberfläche für Terminal,Code und Dateiverzeichnis, welche die Installation und Handhabung der Dateien auf dem Pi erleichtert. Die Erweiterung kann in VSCode über den Tab Erweiterungen installiert werden.
 
 Nach Abschluss der Installation kann die Erweiterung in der Toolbar am linken Bildschirmrand gefunden werden. Unter "Configurations" gilt es nun eine neue SSH FS Konfiguration zu erstellen.
 
@@ -134,10 +79,13 @@ Folgende Einstellungen sind hier zu setzen und abschließend zu speichern:
 - Benutzername & Passwort aus der Installation des Raspberry Pi
 ```
 
-Anschließend kann die Verbindung unter "Configurations" mit einem Klick auf "Open Remote SSH terminal" und das Verzeichnis mittels "Add as Workspace folder" geöffnet werden.
+![Der vollständige Controller mit Sensor und Ventil](./docs/sshfs-menu.png)
+Die SSH-FS Benutzeroberfläche.
+
+Anschließend kann die Verbindung unter "Configurations" (1) mit einem Klick auf den Pfeil mit dem Titel "Open Remote SSH terminal" (2) und das Verzeichnis mittels "Add as Workspace folder" (3) geöffnet werden.
 
 #### Ändern des Netzwerks
-Falls nach der Installation das Netzwerk geändert werden möchte, muss die SD Karte aus dem Pi entfernt und mit dem Computer verbunden werden. Im dortigen Verzeichnis muss anschließend eine Datei namens ***wpa_supplicant.conf*** und folgendem Inhalt hinterlegt werden:
+Falls sich nach der Installation das Netzwerk ändert, muss die SD Karte aus dem Pi entfernt und mit dem Computer verbunden werden. Im dortigen Verzeichnis muss anschließend eine Datei namens ***wpa_supplicant.conf*** mit folgendem Inhalt hinterlegt werden:
 
 ```
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
@@ -152,7 +100,7 @@ Anschließend kann der Pi mit eingelegter SD-Karte neugestartet werden.
 
 #### Installation der notwendigen Bibliotheken
 
-Mit den folgenden Befehlen werden bereits auf den Gerät installierte möglicherweise veraltete Pakete aktualisiert.
+Mit den folgenden Befehlen werden die bereits auf dem Gerät installierten möglicherweise veralteten Pakete aktualisiert.
 ```
 sudo apt update
 sudo apt full-upgrade
@@ -164,9 +112,9 @@ Um das Quellcode Verzeichnis (GitHub Repository) auf dem Raspberry Pi zu install
 git clone https://github.com/OOWVxQF/Smartwatertank-Controller.git
 ```
 
-Um anschließend die die verwendeten Bibliotheken zu installieren muss zunächst in das zuvor angelegte Verzeichnis gewechselt und folgender Befehl ausgeführt werden.
+Um anschließend die vom Controller verwendeten Bibliotheken zu installieren, muss zunächst in das Quellcode Verzeichnis gewechselt und folgender Befehl ausgeführt werden.
 ```
-cd smartwatertank-controller
+cd Smartwatertank-Controller
 pip install -r requirements.txt
 ```
 
@@ -180,9 +128,67 @@ sudo systemctl status oowv-controller.service //Zeigt den Status des Service an
 sudo systemctl restart oowv-controller.service //Startet den Service neu
 sudo system ctl stop oowv-controller.service //Stoppt den Service
 ```
-Sämtliche Ausgaben des Programms werden in den Log-Dateien im Verzeichnis ***home/oowv-controller/logs*** gespeichert.
+Sämtliche Ausgaben des Programms werden in den Log-Dateien im Verzeichnis ***home/Smartwatertank-Controller/logs*** gespeichert.
 
 Anschließend kann der Controller mit der App verwendet werden.
+
+### Aufbau der Hardware
+
+Für die Konstruktion des Controllers werden neben den Komponenten noch weiteres Werkzeug und Bauteile benötigt:
+- Lötkolben und Lötzinn
+- Kabel und Lüsterklemmen
+- Aderendhülsen und Crimpzange
+- Multimeter
+
+#### Controller
+
+Zu Beginn empfiehlt es sich die Komponenten lose in der Dose anzuordnen und anschließend zB. mit einer Heißklebe Pistole zu befestigen.
+Alternativ können die Komponenten auch auf einem Perfboard verlötet und dieses anschließend in der Dose befestigt werden.
+Einige Komponenten müssen bevor Kabel an die Pins angeschlossen werden können noch mit der jeweils mitgelieferten Stifleiste verlötet werden.
+Anschließend können die Öffnungskappen der Dose für den Stecker des Netzteils sowie Kabel des Ventils und Wassersensors entfernt und die Kabel bzw. Stecker in den Öffnungen befestigt werden.
+
+Danach können die Kompononenten nach dem Schaltplan miteinander verkabelt werden.
+
+![Schaltplan 1 mit Stromzufuhr über USB](./docs/oowv-schaltplan-labeled.png)
+Schaltplan 1 mit USB Stromversorgung
+
+![Schaltplan 2 mit Stromzufuhr über Netzteil](./docs/schaltplan-3-labeled.png)
+Schaltplan 2 mit Stromversorgung über Netzteil
+
+![Die verkabelten Komponenten](./docs/wired.png)
+Die verkabelten Komponenten.
+
+![Die verkabelten Komponenten in der Verteilerdose](./docs/box-wired.png)
+Die verkabelten Komponenten in der Verteilerdose
+
+![Der vollständige Controller mit Sensor und Ventil](./docs/closed-controller.png)
+Der vollständige Controller mit Sensor und Ventil
+
+#### Stromversorgung
+Wie in Schaltplan 1 zu sehen, wird der Raspbery Pi über ein Micro USB Kabel mit Strom versorgt. Dieses Kabel kann für die Entwicklung zwar an einen Laptop angeschlossen werden, sobald der Controller allerdings im Freien steht, sollte der Pi entweder über ein Batteriepack oder wie in Schaltplan 2 zu sehen über das 24V Netzteil mit Strom versorgt werden.
+Mittels des Aufwärtswandlers muss dann die 24V Spannung des Netzteils auf die benötigte 5V Micro USB Spannung heruntergeregelt werden. An die Plus und Minus Pins des Wandlers müssen dann noch die Ground (schwarz) und VCC(rot) Kabel des Micro USB Kabels angeschlossen werden.
+
+#### Aufwärtswandler
+Für Schaltplan 1 muss die 5V Spannung des Pis auf eine 24V Spannung für den Messsensor umgewandelt werden.
+Für Schaltplan 2 muss die 24V Ausgangsspannung des Netzteils auf eine 5V Spannung für den Micro USB Anschluss heruntergeregelt werden. 
+Dies geschieht durch Drehen des kleinen Rädchens auf dem Modul.
+Zur Überprüfung des Spannungsverhältnisses, misst man mittels Multimeter den Spannungsabfall zwischen Eingangs- und Ausgangsspannung.
+
+#### Strom-zu-Spannungswandler
+Mittels des Spannungswandlers wird der Strom des Wassersensors in eine Spannung umgewandelt. Desweiteren kann über den Wandler ein Spannungsmaximum für den gefüllten Tank und ein Spannungsminimum für den leeren Tank eingestellt werden.
+Beim Spannungswandler geschieht dies ebenfalls über die Drehrädchen auf dem Modul. Während sich das Spannungsminimum sehr leicht simulieren lässt indem der Wassersensor nicht eingetaucht ist und somit über das ZERO Rädchen auf ein Spannungsminimum von 0V eingestellt werden kann, muss für das Spannungsmaximum der Wassersensor 1 Meter tief in Wasser eingetaucht werden. Dafür legt man den Wassersensor in ein Kunststoffrohr (HT-Rohr) und befüllt dieses auf 1 Meter mit Wasser. Anschließend kann über das SPAN Rädchen das Spannungsmaximum auf 3,3V eingestellt werden. 
+Zur Überprüfung der Spannungen empfiehlt sich hier die Verwendung eines Multimeters indem man den Spannungsabfall auf dem Spannungswandler zwischen GND und VOUT misst.
+
+
+#### Wassertank
+
+Nach dem Zusammenbau des Controllers kann dieser am eigentlichen Wassertank installiert werden. Dabei sollte darauf geachtet werden, dass der Controller sowie das Netzteil vor Regen geschützt und die Kabelverbindungen gut isoliert sind.
+
+![Das Motor-Ventil am Wassertank.](./docs/ventil-horizontal.png)
+Das Motor-Ventil am Wassertank.
+
+![Der Wassertank mit Motor-Ventil und Controller](./docs/tank-front.png)
+Der Wassertank mit Motor-Ventil und Controller
 
 ## Acknowledgements
 
