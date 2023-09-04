@@ -1,0 +1,9 @@
+[Unit]
+Description=OOWV Controller
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python /home/quantumfrog/oowv-controller/oowvcontroller.py
+
+[Install]
+WantedBy=multi-user.target

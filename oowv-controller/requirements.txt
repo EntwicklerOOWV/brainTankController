@@ -1,0 +1,6 @@
+Adafruit_ADS1x15==1.0.2
+Flask==2.3.2
+Requests==2.31.0
+smbus==1.1.post2
+waitress==2.1.2
+Babel==2.12.1
