@@ -32,7 +32,7 @@ https://www.amazon.de/dp/B07TWLG37N
 
 - Micro-USB Kabel
 
-- Verteilerdose zum verstauen der Hardware-Komponenten
+- Verteilerdose zum Verstauen der Hardware-Komponenten
 
 #### Wassertank
 
@@ -51,9 +51,14 @@ https://www.amazon.de/dp/B07V2VX76C
 
 Um das Raspberry Pi OS auf dem Raspberry zu installieren empfiehlt sich der [Raspberry Pi Imager](https://www.raspberrypi.com/software/).
 
-Als Betriebssystem sollte das Raspberry Pi OS (32-bit) ausgewählt werden und als Speichermedium die jeweilige mit dem PC verbundene SD-Karte. Anschließend kann die Installation gestartet werden.
+Als Betriebssystem sollte das Raspberry Pi OS (32-bit) ausgewählt werden und als Speichermedium die jeweilige mit dem PC verbundene SD-Karte.
+Unter den Erweiterten Optionen müssen anschließend ein Hostname gesetzt werden sowie die SSH Option aktiviert werden und dafür Benutzername und Passwort für die Anmeldung des SSH Clients erstellt und notiert werden.
+Abschließend müssen zur Verbindung mit einem Netzwerk noch die benötigten Daten eingetragen werden.
 
-Bei der Konfiguration der Installation sollte die SSH Option aktiviert werden und Benutzername sowie Passwort für die Anmeldung des SSH Clients notiert werden.
+![Der vollständige Controller mit Sensor und Ventil](./docs/pi-os-install-1.png)
+Die SSH-FS Benutzeroberfläche.
+
+Anschließend kann die Installation gestartet werden.
 
 #### Zugriff auf den Raspberry Pi mittels SSH Terminal
 Nach Abschluss der Installation des OS auf der SD Karte, kann diese anschließend in den Kartenslot des Raspberry gesteckt und der Raspberry mittels USB mit einem Computer oder einer anderen 5V Stromquelle verbunden werden.
@@ -115,7 +120,17 @@ git clone https://github.com/OOWVxQF/Smartwatertank-Controller.git
 Um anschließend die vom Controller verwendeten Bibliotheken zu installieren, muss zunächst in das Quellcode Verzeichnis gewechselt und folgender Befehl ausgeführt werden.
 ```
 cd Smartwatertank-Controller
-pip install -r requirements.txt
+sudo pip install -r requirements.txt
+```
+Da der Analog-zu-Digitalwandler über den seriellen Kommunikationsbus I2C mit dem Raspberry kommuniziert, muss dieser auf dem Pi noch eingeschaltet werden.
+Gib dazu folgenden Befehl in das Terminal ein.
+```
+sudo raspi-config
+```
+Im Konfigurationsmenü navigiere zu "Interfacing Options" (Schnittstellenoptionen) und wähle "I2C". Bestätige die Aktivierung des I2C-Interfaces.
+Starte deinen Raspberry Pi neu, damit die Änderungen wirksam werden:
+```
+sudo reboot
 ```
 
 #### Installation des Services
@@ -123,12 +138,12 @@ Damit die Controller-Software automatisch ausgeführt wird sobald der Controller
 Um den Service zu installieren muss die **oowv-controller.service** Datei aus dem zuvor erstellten Verzeichnis in das Verzeichnis ***/lib/systemd/system*** verschoben werden.
 Mit folgenden Befehlen kann der Service anschließend gesteuert werden:
 ```
+sudo systemctl enable oowv-controller.service //Aktiviert den Service
 sudo systemctl start oowv-controller.service //Startet den Service
-sudo systemctl status oowv-controller.service //Zeigt den Status des Service an
+sudo systemctl status oowv-controller.service //Gibt den Status des Service aus
 sudo systemctl restart oowv-controller.service //Startet den Service neu
 sudo system ctl stop oowv-controller.service //Stoppt den Service
 ```
-Sämtliche Ausgaben des Programms werden in den Log-Dateien im Verzeichnis ***home/Smartwatertank-Controller/logs*** gespeichert.
 
 Anschließend kann der Controller mit der App verwendet werden.
 
@@ -172,7 +187,7 @@ Mittels des Aufwärtswandlers muss dann die 24V Spannung des Netzteils auf die b
 Für Schaltplan 1 muss die 5V Spannung des Pis auf eine 24V Spannung für den Messsensor umgewandelt werden.
 Für Schaltplan 2 muss die 24V Ausgangsspannung des Netzteils auf eine 5V Spannung für den Micro USB Anschluss heruntergeregelt werden. 
 Dies geschieht durch Drehen des kleinen Rädchens auf dem Modul.
-Zur Überprüfung des Spannungsverhältnisses, misst man mittels Multimeter den Spannungsabfall zwischen Eingangs- und Ausgangsspannung.
+Zur Überprüfung des Spannungsverhältnisses misst man mittels Multimeter den Spannungsabfall zwischen Eingangs- und Ausgangsspannung.
 
 #### Strom-zu-Spannungswandler
 Mittels des Spannungswandlers wird der Strom des Wassersensors in eine Spannung umgewandelt. Desweiteren kann über den Wandler ein Spannungsmaximum für den gefüllten Tank und ein Spannungsminimum für den leeren Tank eingestellt werden.

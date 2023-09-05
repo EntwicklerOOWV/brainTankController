@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import threading
 import sys
 import datetime
+import os
 
 from modules.database import db_init
 from modules.endpoints import run_flask_app
@@ -20,13 +21,6 @@ def dated_output(stream, log_directory, *args, **kwargs):
 if __name__ == '__main__':
     
     try:
-        # Define your log directory
-        log_directory = "/home/quantumfrog/oowv-controller/logs"
-
-        # Replace the standard print function with the custom_print function
-        sys.stdout.write = lambda message: dated_output("stdout", log_directory, message)
-        sys.stderr.write = lambda message: dated_output("stderr", log_directory, message)
-
         # Initialize Database
         db_init()
 
