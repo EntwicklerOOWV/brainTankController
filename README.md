@@ -10,22 +10,22 @@ Folgende Hardware-Komponenten werden für den Controller benötigt:
 - Raspberry Pi Zero W: Ein leistungsstarker Einplatinencomputer.
 https://www.amazon.de/dp/B06XFZC3BX
 
-- SD-Karte mit ausreichend Speicherplatz: Zum Speichern des Betriebssystems und der Daten.
+- SanDisk Ultra Android microSDHC 32GB: Zum Speichern des Betriebssystems und der Daten.
 https://www.amazon.de/dp/B08GY9NYRM
 
-- 1-Kanal Relais (3V): Für die Schaltung von Geräten.
+- AZDelivery 2-Relais Modul 5V: Für die Schaltung von Geräten.
 https://www.amazon.de/dp/B078Q326KT
 
-- 1 x Aufwärtswandler (3V-32V zu 5V-35V): Zur Spannungsanpassung.
+- Aufwärtswandler XL6009(3V-32V zu 5V-35V): Zur Spannungsanpassung.
 https://www.amazon.de/dp/B00HV59922
 
 - Füllstandssensor (TL-136): Misst den Wasserstand im Tank.
 https://www.amazon.de/dp/B08YWQJM1T
 
-- Analog-zu-Digital-Wandlermodul (ADS1115): Konvertiert analoge Signale in digitale Werte.
+- Analog-zu-Digital-Wandlermodul ADS1115: Konvertiert analoge Signale in digitale Werte.
 https://www.amazon.de/dp/B09135KBLT
 
-- Spannungswandler (4-20Ma Bis 0-3.3V 5V 10V): Wandelt Strom in Spannungsbereich um.
+- Strom zu Spannungsmodul (4-20Ma Bis 0-3.3V 5V 10V): Wandelt Strom in Spannungsbereich um.
 https://www.amazon.de/dp/B07TWLG37N
 
 - 24V Netzteil
@@ -55,8 +55,8 @@ Als Betriebssystem sollte das Raspberry Pi OS (32-bit) ausgewählt werden und al
 Unter den Erweiterten Optionen müssen anschließend ein Hostname gesetzt werden sowie die SSH Option aktiviert werden und dafür Benutzername und Passwort für die Anmeldung des SSH Clients erstellt und notiert werden.
 Abschließend müssen zur Verbindung mit einem Netzwerk noch die benötigten Daten eingetragen werden.
 
-![Der vollständige Controller mit Sensor und Ventil](./docs/pi-os-install-1.png)
-Die SSH-FS Benutzeroberfläche.
+![Erweiterte Optionen im Rasperry Pi Imager](./docs/pi-os-install-1.png)
+
 
 Anschließend kann die Installation gestartet werden.
 
