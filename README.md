@@ -7,42 +7,42 @@ Willkommen in der Dokumentation für das OOWV Smart Watertank Controller Reposit
 
 Folgende Hardware-Komponenten werden für den Controller benötigt:
 
-- Raspberry Pi Zero W: Ein leistungsstarker Einplatinencomputer.
+- Raspberry Pi Zero W: Ein leistungsstarker Einplatinencomputer.  
 https://www.amazon.de/dp/B06XFZC3BX
 
-- SanDisk Ultra Android microSDHC 32GB: Zum Speichern des Betriebssystems und der Daten.
+- SanDisk Ultra Android microSDHC 32GB: Zum Speichern des Betriebssystems und der Daten.  
 https://www.amazon.de/dp/B08GY9NYRM
 
-- AZDelivery 2-Relais Modul 5V: Für die Schaltung von Geräten.
+- AZDelivery 2-Relais Modul 5V: Für die Schaltung von Geräten.  
 https://www.amazon.de/dp/B078Q326KT
 
-- Aufwärtswandler XL6009(3V-32V zu 5V-35V): Zur Spannungsanpassung.
+- Aufwärtswandler XL6009(3V-32V zu 5V-35V): Zur Spannungsanpassung.  
 https://www.amazon.de/dp/B00HV59922
 
-- Füllstandssensor (TL-136): Misst den Wasserstand im Tank.
+- Füllstandssensor (TL-136): Misst den Wasserstand im Tank.  
 https://www.amazon.de/dp/B08YWQJM1T
 
-- Analog-zu-Digital-Wandlermodul ADS1115: Konvertiert analoge Signale in digitale Werte.
+- Analog-zu-Digital-Wandlermodul ADS1115: Konvertiert analoge Signale in digitale Werte.  
 https://www.amazon.de/dp/B09135KBLT
 
-- Strom zu Spannungsmodul (4-20Ma Bis 0-3.3V 5V 10V): Wandelt Strom in Spannungsbereich um.
+- Strom zu Spannungsmodul (4-20Ma Bis 0-3.3V 5V 10V): Wandelt Strom in Spannungsbereich um.  
 https://www.amazon.de/dp/B07TWLG37N
 
-- 24V Netzteil
+- 24V Netzteil  
 
-- Micro-USB Kabel
+- Micro-USB Kabel  
 
-- Verteilerdose zum Verstauen der Hardware-Komponenten
+- Verteilerdose zum Verstauen der Hardware-Komponenten  
 
 #### Wassertank
 
-- 1000L IBC Container
+- 1000L IBC Container  
 https://www.rekubik.de/ibc-container/neue-ibc/1000l-ibc-container-rebottled-food-auf-stahlpalette-neuwertig?number=RK50122
 
-- IBC Adapter S60x6 - 2-fach 1" Kugelhahn mit 3/4" Tülle
+- IBC Adapter S60x6 - 2-fach 1" Kugelhahn mit 3/4" Tülle  
 https://www.rekubik.de/ibc-zubehoer/adapter/s60x6-grobgewinde/ibc-adapter-s60x6-2-fach-1-kugelhahn-mit-3/4-tuelle-geka-kompatibel
 
-- Motorkugelhahnventil
+- Motorkugelhahnventil  
 https://www.amazon.de/dp/B07V2VX76C
 
 ## Installation
@@ -84,7 +84,7 @@ Folgende Einstellungen sind hier zu setzen und abschließend zu speichern:
 - Benutzername & Passwort aus der Installation des Raspberry Pi
 ```
 
-![Der vollständige Controller mit Sensor und Ventil](./docs/sshfs-menu.png)
+![Der vollständige Controller mit Sensor und Ventil](./docs/sshfs-menu.png)  
 Die SSH-FS Benutzeroberfläche.
 
 Anschließend kann die Verbindung unter "Configurations" (1) mit einem Klick auf den Pfeil mit dem Titel "Open Remote SSH terminal" (2) und das Verzeichnis mittels "Add as Workspace folder" (3) geöffnet werden.
