@@ -4,3 +4,4 @@ Requests==2.31.0
 smbus==1.1.post2
 waitress==2.1.2
 Babel==2.12.1
+RPi.GPIO==0.7.1
