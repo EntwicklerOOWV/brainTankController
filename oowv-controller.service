@@ -3,7 +3,8 @@ Description=OOWV Controller
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python /home/Smartwatertank-Controller/oowvcontroller.py
+ExecStart=/home/quantumfrog/venv/bin/python /home/quantumfrog/venv/Smartwatertank-Controller/oowvcontroller.py
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
