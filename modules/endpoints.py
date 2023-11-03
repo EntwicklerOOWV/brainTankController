@@ -22,7 +22,7 @@ def get_local_ip():
         # Create a socket object
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Connect to a remote server (doesn't matter which one)
-        s.connect(("8.8.8.8", 80))
+        s.connect(("8.8.8.8", 5000))
         # Get the local IP address
         local_ip = s.getsockname()[0]
         # Close the socket
@@ -33,10 +33,9 @@ def get_local_ip():
         return None
 
 def run_flask_app():
-    #app.run(host=get_local_ip(), port=80)
     local_ip = get_local_ip()
     print(local_ip)
-    serve(app, host=local_ip, port=80)
+    serve(app, host=local_ip, port=5000)
 
 def replace_valid_data(data, config):
     try:
@@ -45,7 +44,8 @@ def replace_valid_data(data, config):
 
         for key in common_keys:
             # Update the value in the config dictionary with the value from data
-            config.data[key] = data[key]
+            if data[key] is not None:
+                config.data[key] = data[key]
 
         config.save_to_file()
 
@@ -93,7 +93,7 @@ def update_player_ids():
     data = request.get_json()
     player_id = data["playerID"]
 
-    if player_id not in user_config.player_ids:
+    if player_id not in user_config.player_ids or player_id != "undefined" or player_id != "null":
         user_config.player_ids.append(player_id)
         user_config.save_to_file()
         return jsonify({'message': 'Success'}), 200
