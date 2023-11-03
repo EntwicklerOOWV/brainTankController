@@ -60,6 +60,8 @@ Abschließend müssen zur Verbindung mit einem Netzwerk noch die benötigten Dat
 
 Anschließend kann die Installation gestartet werden.
 
+<br>
+
 #### Zugriff auf den Raspberry Pi mittels SSH Terminal
 Nach Abschluss der Installation des OS auf der SD Karte, kann diese anschließend in den Kartenslot des Raspberry gesteckt und der Raspberry mittels USB mit einem Computer oder einer anderen 5V Stromquelle verbunden werden.
 Nachdem der Raspberry erfolgreich hochgefahren ist, kann auf den Pi mittels SSH Verbindung zugegriffen werden.
@@ -70,24 +72,8 @@ ssh <benutzername>@<raspberrypi-netzwerk-ip>
 <benutzername>@<raspberrypi-netzwerk-ip>'s password:<passwort>
 ```
 
-#### Visual Studio Code und SSH FS
-Um mittels Visual Studio Code auf den Pi zuzugreifen, kann die Erweiterung "FS SSH" genutzt werden. Diese bietet eine grafische Benutzeroberfläche für Terminal,Code und Dateiverzeichnis, welche die Installation und Handhabung der Dateien auf dem Pi erleichtert. Die Erweiterung kann in VSCode über den Tab Erweiterungen installiert werden.
-
-Nach Abschluss der Installation kann die Erweiterung in der Toolbar am linken Bildschirmrand gefunden werden. Unter "Configurations" gilt es nun eine neue SSH FS Konfiguration zu erstellen.
-
-Folgende Einstellungen sind hier zu setzen und abschließend zu speichern:
-```
-
-- Host: IP des Raspberry im Netzwerk
-- Port:22
-- Root:~/
-- Benutzername & Passwort aus der Installation des Raspberry Pi
-```
-
-![Der vollständige Controller mit Sensor und Ventil](./docs/sshfs-menu.png)  
-Die SSH-FS Benutzeroberfläche.
-
-Anschließend kann die Verbindung unter "Configurations" (1) mit einem Klick auf den Pfeil mit dem Titel "Open Remote SSH terminal" (2) und das Verzeichnis mittels "Add as Workspace folder" (3) geöffnet werden.
+#### Termius
+Um mit dem Raspberry PI zu kommunizieren kann ein Service wie Termius verwendet werden. Dieser bietet eine SHH- sowie eine SFTP-Funktion um Dateien einfach auf den Raspberry Pi zu laden.
 
 #### Ändern des Netzwerks
 Falls sich nach der Installation das Netzwerk ändert, muss die SD Karte aus dem Pi entfernt und mit dem Computer verbunden werden. Im dortigen Verzeichnis muss anschließend eine Datei namens ***wpa_supplicant.conf*** mit folgendem Inhalt hinterlegt werden:
@@ -103,6 +89,8 @@ network={
 ```
 Anschließend kann der Pi mit eingelegter SD-Karte neugestartet werden.
 
+<br>
+
 #### Installation der notwendigen Bibliotheken
 
 Mit den folgenden Befehlen werden die bereits auf dem Gerät installierten möglicherweise veralteten Pakete aktualisiert.
@@ -110,32 +98,62 @@ Mit den folgenden Befehlen werden die bereits auf dem Gerät installierten mögl
 sudo apt update
 sudo apt full-upgrade
 ```
-
-#### Installation des Quellcodes auf dem Raspberry Pi Zero
-Um das Quellcode Verzeichnis (GitHub Repository) auf dem Raspberry Pi zu installieren, muss folgender Befehl im home Verzeichnis des Pi ausgeführt werden.
-```
-git clone https://github.com/OOWVxQF/Smartwatertank-Controller.git
-```
-
-Um anschließend die vom Controller verwendeten Bibliotheken zu installieren, muss zunächst in das Quellcode Verzeichnis gewechselt und folgender Befehl ausgeführt werden.
-```
-cd Smartwatertank-Controller
-sudo pip install -r requirements.txt
-```
-Da der Analog-zu-Digitalwandler über den seriellen Kommunikationsbus I2C mit dem Raspberry kommuniziert, muss dieser auf dem Pi noch eingeschaltet werden.
-Gib dazu folgenden Befehl in das Terminal ein.
+Da der Analog-zu-Digitalwandler über den seriellen Kommunikationsbus I2C mit dem Raspberry kommuniziert,
+muss dieser auf dem Pi noch eingeschaltet werden.
 ```
 sudo raspi-config
 ```
-Im Konfigurationsmenü navigiere zu "Interfacing Options" (Schnittstellenoptionen) und wähle "I2C". Bestätige die Aktivierung des I2C-Interfaces.
+Im Konfigurationsmenü navigiere zu "Interfacing Options" (Schnittstellenoptionen) und wähle "I2C".
+Bestätige die Aktivierung des I2C-Interfaces.
 Starte deinen Raspberry Pi neu, damit die Änderungen wirksam werden:
 ```
 sudo reboot
 ```
 
+<br>
+
+#### Installation des Quellcodes auf dem Raspberry Pi Zero
+
+Bevor der Quellcode auf dem Raspberry Pi installiert werden kann, muss zunächst im Benutzerverzeichnis 
+*/home/user* (user steht für den gewählten Benutzernamen) eine virtuelle Umgebung erstellt werden.
+```
+home/user: python3 -m venv venv
+```
+
+Anschließend kann der Quellcode mittels Git auf den Raspberry Pi in das *home/user/venv* Verzeichnis 
+geladen werden oder alternativ auch im Browser als Archiv heruntergeladen und mittels STFTP Client auf den 
+Raspberry Pi geladen werden.
+
+```
+home/user/venv: git clone https://github.com/OOWVxQF/Smartwatertank-Controller.git
+```
+Anschließend kann zuerst die Virtuelle Umgebung aktiviert werden und anschließend die in der *requirements.txt* Datei aufgelisteten
+Bibliotheken installiert werden.
+```
+home/user/venv: source bin/activate
+(venv) home/user/venv/Smartwatertank-Controller: pip install -r requirements.txt
+```
+
+<br>
+
+#### Testen des Programms
+Um das Programm auch für den Zusammenbau der Hardware zu testen kann es wie folgt ausgeführt werden:
+```
+(venv) home/user/venv/Smartwartertank-Controller: python oowvcontroller.py
+```
 #### Installation des Services
 Damit die Controller-Software automatisch ausgeführt wird sobald der Controller gestartet wird, muss ein Linux Service eingerichtet werden.
-Um den Service zu installieren muss die **oowv-controller.service** Datei aus dem zuvor erstellten Verzeichnis in das Verzeichnis ***/lib/systemd/system*** verschoben werden.
+
+Zunächst muss der im Raspberry Pi Setup eingetragene Benutzername noch in den Verzeichnispfad der *oowv-controller.service* Datei eingetragen werden.
+
+```
+ExecStart=/home/<ersetzen>/venv/bin/python /home/<ersetzen>/venv/Smartwatertank-Controller/oowvcontroller.py
+```
+
+Anschließend kann die Datei in das Verzeichnis */etc/systemd/system* verschoben werden.
+```
+(venv) home/user/venv/Smartwatertank-Controller: sudo mv oowv-controller.service /etc/systemd/system
+```
 Mit folgenden Befehlen kann der Service anschließend gesteuert werden:
 ```
 sudo systemctl enable oowv-controller.service //Aktiviert den Service
@@ -144,8 +162,12 @@ sudo systemctl status oowv-controller.service //Gibt den Status des Service aus
 sudo systemctl restart oowv-controller.service //Startet den Service neu
 sudo system ctl stop oowv-controller.service //Stoppt den Service
 ```
-
+```
+sudo journalctl -f -u oowv-controller.service //Gibt die Logausgabe des Services aus
+```
 Anschließend kann der Controller mit der App verwendet werden.
+
+<br>
 
 ### Aufbau der Hardware
 
