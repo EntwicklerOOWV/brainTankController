@@ -51,7 +51,12 @@ def default_process():
             stored_rain_volume = abs(waterlevel_difference) if waterlevel_difference > 0 else 0
             used_rain_volume = abs(waterlevel_difference) if waterlevel_difference < 0 else 0
             total_surface_area = user_config.calculate_total_surface_area()
-            rain_volume = total_surface_area * weatherData.projected_ppt
+
+            try:
+                rain_volume = total_surface_area * weatherData.projected_ppt
+            except TypeError:
+                rain_volume = 0
+
             actual_ppt_mm = (waterlevel_difference * 1000) / total_surface_area if total_surface_area > 0 else 0
             overflow_rain_volume = rain_volume if waterlevel_new >= 0.9 and weatherData.projected_ppt > 0 else 0
 
