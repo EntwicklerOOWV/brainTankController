@@ -66,6 +66,7 @@ Anschließend kann die Installation gestartet werden.
 Nach Abschluss der Installation des OS auf der SD Karte, kann diese anschließend in den Kartenslot des Raspberry gesteckt und der Raspberry mittels USB mit einem Computer oder einer anderen 5V Stromquelle verbunden werden.
 Nachdem der Raspberry erfolgreich hochgefahren ist, kann auf den Pi mittels SSH Verbindung zugegriffen werden.
 
+
 #### Powershell
 ```
 ssh <benutzername>@<raspberrypi-netzwerk-ip>
@@ -117,7 +118,7 @@ sudo reboot
 Bevor der Quellcode auf dem Raspberry Pi installiert werden kann, muss zunächst im Benutzerverzeichnis 
 */home/user* (user steht für den gewählten Benutzernamen) eine virtuelle Umgebung erstellt werden.
 ```
-home/user: python3 -m venv venv
+python3 -m venv venv
 ```
 
 Anschließend kann der Quellcode mittels Git auf den Raspberry Pi in das *home/user/venv* Verzeichnis 
@@ -125,34 +126,43 @@ geladen werden oder alternativ auch im Browser als Archiv heruntergeladen und mi
 Raspberry Pi geladen werden.
 
 ```
-home/user/venv: git clone https://github.com/OOWVxQF/Smartwatertank-Controller.git
+git clone https://github.com/OOWVxQF/Smartwatertank-Controller.git
 ```
-Anschließend kann zuerst die Virtuelle Umgebung aktiviert werden und anschließend die in der *requirements.txt* Datei aufgelisteten
+Anschließend muss zuerst im venv Verzeichnis die Virtuelle Umgebung aktiviert werden.
+Die aktivierte Umgebung ist in der Konsole durch das Prefix *(venv)* vor dem Pfad zu erkennen.
+```
+source bin/activate
+```
+
+Anschließend müssen im Verzeichnis venv/Smartwatertank-Controller die in der *requirements.txt* Datei aufgelisteten
 Bibliotheken installiert werden.
 ```
-home/user/venv: source bin/activate
-(venv) home/user/venv/Smartwatertank-Controller: pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 <br>
 
 #### Testen des Programms
-Um das Programm auch für den Zusammenbau der Hardware zu testen kann es wie folgt ausgeführt werden:
+Um das Programm auch für den Zusammenbau der Hardware zu testen und die Konsolenausgaben direkt zu sehen, 
+kann es im Verzeichnis *venv/Smartwatertank-Contoller* wie folgt ausgeführt werden:
 ```
-(venv) home/user/venv/Smartwartertank-Controller: python oowvcontroller.py
+python oowvcontroller.py
 ```
+
+<br>
+
 #### Installation des Services
 Damit die Controller-Software automatisch ausgeführt wird sobald der Controller gestartet wird, muss ein Linux Service eingerichtet werden.
 
-Zunächst muss der im Raspberry Pi Setup eingetragene Benutzername noch in den Verzeichnispfad der *oowv-controller.service* Datei eingetragen werden.
+Zunächst muss der im Raspberry Pi Setup eingetragene Benutzername noch in beiden Verzeichnispfaden der *oowv-controller.service* Datei eingetragen werden.
 
 ```
 ExecStart=/home/<ersetzen>/venv/bin/python /home/<ersetzen>/venv/Smartwatertank-Controller/oowvcontroller.py
 ```
 
-Anschließend kann die Datei in das Verzeichnis */etc/systemd/system* verschoben werden.
+Anschließend kann die Datei aus dem Verzeichnis *venv/Smartwatertank-Controller* in das Verzeichnis */etc/systemd/system* verschoben werden.
 ```
-(venv) home/user/venv/Smartwatertank-Controller: sudo mv oowv-controller.service /etc/systemd/system
+sudo mv oowv-controller.service /etc/systemd/system
 ```
 Mit folgenden Befehlen kann der Service anschließend gesteuert werden:
 ```
