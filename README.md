@@ -28,7 +28,7 @@ https://www.amazon.de/dp/B09135KBLT
 - Strom zu Spannungsmodul (4-20Ma Bis 0-3.3V 5V 10V): Wandelt Strom in Spannungsbereich um.  
 https://www.amazon.de/dp/B07TWLG37N
 
-- 24V Netzteil  
+- Micro USB Netzteil (Raspberry Pi 5V 3A Netzteil)
 
 - Micro-USB Kabel  
 
@@ -142,6 +142,16 @@ pip install -r requirements.txt
 
 <br>
 
+#### Speicheraddresse des ADS1115 Moduls
+Damit der Analog-zu-Digitalwandler über den I2C Bus angesprochen werden kann, muss die Speicheraddresse des Moduls bekannt sein.
+Diese kann mittels folgendem Befehl ausgelesen werden:
+```
+sudo i2cdetect -y 1
+```
+Sollte die dort ausgegebene Adresse nicht 0x49 sein sondern zB. 0x48, muss diese in der Datei *hardware.py* in Zeile 31 durch die richtige Adresse ersetzt werden. Falls in der Ausgabe keine Addresse angezeigt wird, muss das Modul nochmal überprüft werden.
+
+<br>
+
 #### Testen des Programms
 Um das Programm auch für den Zusammenbau der Hardware zu testen und die Konsolenausgaben direkt zu sehen, 
 kann es im Verzeichnis *venv/Smartwatertank-Contoller* wie folgt ausgeführt werden:
@@ -196,11 +206,8 @@ Anschließend können die Öffnungskappen der Dose für den Stecker des Netzteil
 
 Danach können die Kompononenten nach dem Schaltplan miteinander verkabelt werden.
 
-![Schaltplan 1 mit Stromzufuhr über USB](./docs/oowv-schaltplan-labeled.png)
-Schaltplan 1 mit USB Stromversorgung
-
-![Schaltplan 2 mit Stromzufuhr über Netzteil](./docs/schaltplan-3-labeled.png)
-Schaltplan 2 mit Stromversorgung über Netzteil
+![Schaltplan 1 mit Stromzufuhr über USB](./docs/schaltplan.png)
+Schaltplan mit Stromversorgung über Netzteil
 
 ![Die verkabelten Komponenten](./docs/wired.png)
 Die verkabelten Komponenten.
@@ -212,12 +219,13 @@ Die verkabelten Komponenten in der Verteilerdose
 Der vollständige Controller mit Sensor und Ventil
 
 #### Stromversorgung
-Wie in Schaltplan 1 zu sehen, wird der Raspbery Pi über ein Micro USB Kabel mit Strom versorgt. Dieses Kabel kann für die Entwicklung zwar an einen Laptop angeschlossen werden, sobald der Controller allerdings im Freien steht, sollte der Pi entweder über ein Batteriepack oder wie in Schaltplan 2 zu sehen über das 24V Netzteil mit Strom versorgt werden.
-Mittels des Aufwärtswandlers muss dann die 24V Spannung des Netzteils auf die benötigte 5V Micro USB Spannung heruntergeregelt werden. An die Plus und Minus Pins des Wandlers müssen dann noch die Ground (schwarz) und VCC(rot) Kabel des Micro USB Kabels angeschlossen werden.
+Wie im Schaltplan zu sehen, wird der Raspbery Pi über ein Micro USB Kabel mit Strom versorgt. 
+Dieses Kabel kann für die Entwicklung zwar an einen Laptop angeschlossen werden, 
+sobald der Controller allerdings im Freien steht, sollte der Pi entweder über ein Batteriepack 
+oder ein 5V/3A Netzteil mit Strom versorgt werden.
 
 #### Aufwärtswandler
-Für Schaltplan 1 muss die 5V Spannung des Pis auf eine 24V Spannung für den Messsensor umgewandelt werden.
-Für Schaltplan 2 muss die 24V Ausgangsspannung des Netzteils auf eine 5V Spannung für den Micro USB Anschluss heruntergeregelt werden. 
+Um das Ventil sowie den Sensor mit 24V zu versorgen muss der Aufwärtswandler auf 5V Eingangsspannung und 24V Ausgangsspannung eingestellt werden.
 Dies geschieht durch Drehen des kleinen Rädchens auf dem Modul.
 Zur Überprüfung des Spannungsverhältnisses misst man mittels Multimeter den Spannungsabfall zwischen Eingangs- und Ausgangsspannung.
 
