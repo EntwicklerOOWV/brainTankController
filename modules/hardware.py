@@ -3,6 +3,7 @@ import Adafruit_ADS1x15
 import time
 import threading
 import smbus
+import numpy as np
 
 from modules.configuration import dashboard_config
 from modules.structs import task
@@ -26,11 +27,11 @@ GPIO.setup(GPIO_ECHO, GPIO.IN)
 #Ensure RELAY Pin is low
 GPIO.output(GPIO_RELAY, GPIO.LOW)
 
-#ADS1115 Object
-adc = Adafruit_ADS1x15.ADS1115(address=0x49)
-
 # ADS1115 address on the I2C bus
 ADS1115_ADDRESS = 0x49
+
+#ADS1115 Object
+adc = Adafruit_ADS1x15.ADS1115(address=ADS1115_ADDRESS)
 
 # Select the I2C bus (for Raspberry Pi 3, use '1' instead of '0')
 bus = smbus.SMBus(1)
@@ -70,14 +71,14 @@ def measure_waterlevel():
     thread_lock.acquire()
     
     print("measuring waterlevel")
-    adc_values = []
-    for x in range(0,5):
+    adc_measurements = []
+    for x in range(0,10):
         adc_value = read_adc_value()
-        adc_values.append(adc_value)
-        time.sleep(1)
+        adc_measurements.append(adc_value)
+        time.sleep(0.2)
 
-    adc_average = list_average(adc_values)
-    voltage = calculate_voltage(adc_average)
+    corrected_measurements = correct_measurements(adc_measurements)
+    voltage = calculate_voltage(corrected_measurements)
     liters = voltage_to_liters(voltage)
     waterlevel = liters / 1000
     thread_lock.release()
@@ -102,8 +103,9 @@ def threshold_drain():
             relay_open()
             dashboard_config.is_draining = True
         
-        time.sleep(0.3)
         current_level = measure_waterlevel()
+        dashboard_config.waterlevel = current_level
+        time.sleep(0.3)
 
     relay_close()
     print("threshold-drain finished")
@@ -113,6 +115,24 @@ def threshold_drain():
     dashboard_config.waterlevel = current_level
     task.set_task("default",None)
     task.set_drain_stopped(False)
+
+def correct_measurements(measurements):
+    mean = np.mean(measurements)
+    std_dev = np.std(measurements)
+
+    # Set a threshold for Z-score (e.g., 2 standard deviations)
+    z_scores = [(x - mean) / std_dev for x in measurements]
+    threshold = 2
+
+    # Identify outliers
+    outliers = [x for x, z in zip(measurements, z_scores) if abs(z) > threshold]
+
+    # Remove outliers
+    filtered_measurements = [x for x in measurements if x not in outliers]
+
+    # Calculate the average without outliers
+    average_without_outliers = np.mean(filtered_measurements)
+    return average_without_outliers
 
 def list_average(ls):
     average = sum(ls)/len(ls)
