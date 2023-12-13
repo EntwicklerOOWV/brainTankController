@@ -75,7 +75,7 @@ def measure_waterlevel():
     for x in range(0,10):
         adc_value = read_adc_value()
         adc_measurements.append(adc_value)
-        time.sleep(0.2)
+        time.sleep(0.5)
 
     corrected_measurements = correct_measurements(adc_measurements)
     voltage = calculate_voltage(corrected_measurements)
@@ -105,7 +105,7 @@ def threshold_drain():
         
         current_level = measure_waterlevel()
         dashboard_config.waterlevel = current_level
-        time.sleep(0.3)
+        time.sleep(1)
 
     relay_close()
     print("threshold-drain finished")
