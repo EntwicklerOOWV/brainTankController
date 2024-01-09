@@ -82,6 +82,9 @@ def measure_waterlevel():
     liters = voltage_to_liters(voltage)
     waterlevel = liters / 1000
     thread_lock.release()
+
+    waterlevel = 1.0 if waterlevel > 1.0 else waterlevel
+
     return round(waterlevel,2)
 
 def threshold_drain():

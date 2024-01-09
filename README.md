@@ -140,6 +140,11 @@ Bibliotheken installiert werden.
 pip install -r requirements.txt
 ```
 
+Falls bei der Installation der numpy Bibliothek ein Fehler auftritt, muss zuvor noch dieser Befehl ausgeführt werden.
+```
+sudo apt-get install libopenblas-dev
+```
+
 <br>
 
 #### Speicheraddresse des ADS1115 Moduls

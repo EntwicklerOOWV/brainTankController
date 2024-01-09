@@ -21,9 +21,10 @@ def default_process():
 
         # request Weather Data
         weatherData = WeatherData()
+        print("weatherdata type:", type(weatherData))
 
         # skips the following code if weather data couldn't successfully initialize
-        if weatherData == None:
+        if weatherData is None:
             sleep_seconds(10)
             continue
         
@@ -64,7 +65,7 @@ def default_process():
             rainday_precipitation_threshold = 2
             if weatherData.projected_ppt > rainday_precipitation_threshold:
                 rainday = True
-            else:  
+            else:
                 rainday = False
 
             # determine drainage timestamp
