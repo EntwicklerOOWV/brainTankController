@@ -13,8 +13,10 @@ from modules.structs import task
 
 app = Flask(__name__)
 
+
 # Create a German locale
 german_locale = Locale('de', 'DE')
+
 
 # Helper Functions
 def get_local_ip():
@@ -99,6 +101,7 @@ def update_player_ids():
         return jsonify({'message': 'Success'}), 200
     else:
         return jsonify({"message": "String value is already in the singleton array."}), 400
+
 
 # Send Push Notification
 def send_push_notifications(message):
@@ -207,6 +210,18 @@ def get_yearly_data():
     
     return jsonify(data), 200
 
+@app.route('/get_current_data')
+def get_current_data():
+    data = {
+        "messungsZeit": dashboard_config.current_time,
+        "lat": user_config.latitude,
+        "lon": user_config.longitude,
+        "dachflaeche": user_config.calculate_total_surface_area(),
+        "gemessen": dashboard_config.waterlevel,
+    }
+
+    return data, 200
+
 
 # Endpoint to trigger threshold_drain
 @app.route('/threshold_drain/<threshold_value>')
@@ -214,6 +229,7 @@ def trigger_threshold_drain(threshold_value):
     task.set_task("threshold_drain",float(threshold_value))
     dashboard_config.drain_threshold = float(threshold_value)
     return jsonify(message="Threshold drain triggered"), 200
+
 
 # Endpoint to stop threshold_drain
 @app.route('/stop_drain')

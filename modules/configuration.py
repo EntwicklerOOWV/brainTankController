@@ -109,6 +109,15 @@ class DashboardConfig(Config):
         self.data["forecast"] = value
         self.save_to_file()
 
+    @property
+    def current_time(self):
+        return self.data.get("current_time")
+
+    @current_time.setter
+    def current_time(self, value):
+        self.data["current_time"] = value
+        self.save_to_file()
+
 class UserConfig(Config):
     def __init__(self, file_path, data):
         super().__init__(file_path, data)

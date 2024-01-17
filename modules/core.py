@@ -1,5 +1,6 @@
 import time
 import requests
+import json
 from datetime import datetime, timedelta
 
 from modules.configuration import dashboard_config, user_config, automation_config
@@ -41,6 +42,7 @@ def default_process():
             print("new waterlevel:",waterlevel_new)
 
             # Set Config Values
+            dashboard_config.current_time = weatherData.date
             dashboard_config.forecast = weatherData.forecast
             dashboard_config.waterlevel = waterlevel_new
             dashboard_config.is_draining = False
@@ -92,6 +94,9 @@ def default_process():
 
             else:
                 dashboard_config.drain_advised = False
+
+            # Send Measured Values to Server
+            #send_data_to_server(weatherData, waterlevel_new, total_surface_area)
 
             # Set Database Values
             dbEntry.date = weatherData.date
@@ -181,3 +186,26 @@ def subtract_from_timestamp(timestamp, minutes):
     dt = datetime.strptime(timestamp, format_str)
     new_dt = dt - timedelta(minutes=int(minutes))
     return new_dt.strftime(format_str)
+
+def send_data_to_server(weatherData, waterlevel_new, total_surface_area):
+    data = {
+        "messungsZeit": weatherData.date,
+        "lat": weatherData.latitude,
+        "lon": weatherData.longitude,
+        "dachflaeche": total_surface_area,
+        "gemessen": waterlevel_new,
+    }
+
+    json_data = json.dumps(data)
+
+    url = 'https://swat.itwh.de/datenApi'
+
+    response = requests.post(url, data=json_data, headers={'Content-Type': 'application/json'})
+
+    if response.status_code == 200:
+        print("Data sent successfully")
+        print("Response:", response.json())
+    else:
+        print("Failed to send data")
+        print("Status Code:", response.status_code)
+        print("Response:", response.text)
