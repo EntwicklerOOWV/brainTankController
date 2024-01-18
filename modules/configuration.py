@@ -118,6 +118,15 @@ class DashboardConfig(Config):
         self.data["current_time"] = value
         self.save_to_file()
 
+    @property
+    def mac_address(self):
+        return self.data.get("mac_address")
+
+    @mac_address.setter
+    def mac_address(self, value):
+        self.data["mac_address"] = value
+        self.save_to_file()
+
 class UserConfig(Config):
     def __init__(self, file_path, data):
         super().__init__(file_path, data)

@@ -51,6 +51,7 @@ def default_process():
 
             # Calculations
             waterlevel_difference = waterlevel_new - waterlevel_old
+            print("waterlevel_difference: ", waterlevel_difference)
             stored_rain_volume = abs(waterlevel_difference) if waterlevel_difference > 0 else 0
             used_rain_volume = abs(waterlevel_difference) if waterlevel_difference < 0 else 0
             total_surface_area = user_config.calculate_total_surface_area()
@@ -65,9 +66,12 @@ def default_process():
 
             # Set Rainday
             rainday_precipitation_threshold = 2
-            if weatherData.projected_ppt > rainday_precipitation_threshold:
-                rainday = True
-            else:
+            try:
+                if weatherData.projected_ppt > rainday_precipitation_threshold:
+                    rainday = True
+                else:
+                    rainday = False
+            except TypeError:
                 rainday = False
 
             # determine drainage timestamp
@@ -96,7 +100,7 @@ def default_process():
                 dashboard_config.drain_advised = False
 
             # Send Measured Values to Server
-            #send_data_to_server(weatherData, waterlevel_new, total_surface_area)
+            # send_data_to_server(weatherData, waterlevel_new, total_surface_area)
 
             # Set Database Values
             dbEntry.date = weatherData.date
@@ -194,6 +198,8 @@ def send_data_to_server(weatherData, waterlevel_new, total_surface_area):
         "lon": weatherData.longitude,
         "dachflaeche": total_surface_area,
         "gemessen": waterlevel_new,
+        "entwässerung": dashboard_config.is_draining,
+        "macAdresse": dashboard_config.mac_address,
     }
 
     json_data = json.dumps(data)

@@ -1,5 +1,6 @@
 import socket
 import requests
+import uuid
 from datetime import datetime, timedelta
 from babel.dates import format_date, format_datetime, format_time
 from babel.core import Locale
@@ -34,9 +35,17 @@ def get_local_ip():
         print(f"An error occurred while retrieving local IP: {e}")
         return None
 
+def get_mac_address():
+    hostname = socket.gethostname()
+    ip_address = socket.gethostbyname(hostname)
+    mac_address = ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) for elements in range(0, 2*6, 8)][::-1])
+    return mac_address
+
 def run_flask_app():
     local_ip = get_local_ip()
+    dashboard_config.mac_address = get_mac_address()
     print(local_ip)
+    print(dashboard_config.mac_address)
     serve(app, host=local_ip, port=5000)
 
 def replace_valid_data(data, config):
