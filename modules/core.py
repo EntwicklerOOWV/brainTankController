@@ -42,9 +42,9 @@ def default_process():
             print("new waterlevel:",waterlevel_new)
 
             # Set Config Values
+            dashboard_config.waterlevel = waterlevel_new
             dashboard_config.current_time = weatherData.date
             dashboard_config.forecast = weatherData.forecast
-            dashboard_config.waterlevel = waterlevel_new
             dashboard_config.is_draining = False
 
             print("weatherData.projectedPPT",weatherData.projected_ppt)
@@ -52,8 +52,11 @@ def default_process():
             # Calculations
             waterlevel_difference = waterlevel_new - waterlevel_old
             print("waterlevel_difference: ", waterlevel_difference)
-            stored_rain_volume = abs(waterlevel_difference) if waterlevel_difference > 0 else 0
-            used_rain_volume = abs(waterlevel_difference) if waterlevel_difference < 0 else 0
+            stored_rain_volume = abs(max(waterlevel_difference, 0))
+            print("stored_rain_volume: ", stored_rain_volume)
+            used_rain_volume = abs(min(waterlevel_difference, 0))
+            print("used_rain_volume: ", used_rain_volume)
+
             total_surface_area = user_config.calculate_total_surface_area()
 
             try:

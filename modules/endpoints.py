@@ -36,9 +36,10 @@ def get_local_ip():
         return None
 
 def get_mac_address():
-    hostname = socket.gethostname()
-    ip_address = socket.gethostbyname(hostname)
-    mac_address = ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) for elements in range(0, 2*6, 8)][::-1])
+    mac_num = uuid.getnode()
+    mac_hex = '{:012x}'.format(mac_num)
+    mac_address = ':'.join(mac_hex[i:i+2] for i in range(0, 12, 2))
+
     return mac_address
 
 def run_flask_app():
