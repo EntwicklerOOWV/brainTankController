@@ -103,7 +103,7 @@ def default_process():
                 dashboard_config.drain_advised = False
 
             # Send Measured Values to Server
-            # send_data_to_server(weatherData, waterlevel_new, total_surface_area)
+            send_data_to_server(weatherData, waterlevel_new, total_surface_area)
 
             # Set Database Values
             dbEntry.date = weatherData.date
@@ -124,7 +124,7 @@ def default_process():
         
         print("task drain stop: ", task.drain_stopped)
 
-        sleep_seconds(180)
+        sleep_seconds(300)
 
 def drain_process():
     while True:
@@ -201,13 +201,13 @@ def send_data_to_server(weatherData, waterlevel_new, total_surface_area):
         "lon": weatherData.longitude,
         "dachflaeche": total_surface_area,
         "gemessen": waterlevel_new,
-        "entwässerung": dashboard_config.is_draining,
+        "entwaesserung": dashboard_config.is_draining,
         "macAdresse": dashboard_config.mac_address,
     }
 
     json_data = json.dumps(data)
 
-    url = 'https://swat.itwh.de/datenApi'
+    url = 'https://swat.itwh.de/Vorhersage/PostRegentonneData'
 
     response = requests.post(url, data=json_data, headers={'Content-Type': 'application/json'})
 
