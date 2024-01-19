@@ -161,32 +161,35 @@ def request_json_data(url):
         return None
 
 def find_drain_timestamp(forecast:dict):
-    values = list(forecast.values())
-    keys = list(forecast.keys())
+    try:
+        values = list(forecast.values())
+        keys = list(forecast.keys())
 
-    start_index = None
+        start_index = None
 
-    for i in range(len(values)):
-        
-        if values[i] != 0:
-            if start_index is None:
-                start_index = i
+        for i in range(len(values)):
 
-        if start_index is not None:
-            
-            timerange = int(int(automation_config.ppt_trigger_timerange)/5)
-            end_index = int(start_index)+timerange
+            if values[i] != 0:
+                if start_index is None:
+                    start_index = i
 
-            cummulated_ppt_sum = sum(values[start_index:end_index])
+            if start_index is not None:
 
-            ppt_value_exceeds = cummulated_ppt_sum > automation_config.ppt_trigger_value
-            
-            if ppt_value_exceeds:
-                drain_timestamp = subtract_from_timestamp(keys[start_index],automation_config.preemptive_drain_time)
-                return drain_timestamp
-            start_index = None
+                timerange = int(int(automation_config.ppt_trigger_timerange)/5)
+                end_index = int(start_index)+timerange
 
-    return None
+                cummulated_ppt_sum = sum(values[start_index:end_index])
+
+                ppt_value_exceeds = cummulated_ppt_sum > automation_config.ppt_trigger_value
+
+                if ppt_value_exceeds:
+                    drain_timestamp = subtract_from_timestamp(keys[start_index],automation_config.preemptive_drain_time)
+                    return drain_timestamp
+                start_index = None
+
+        return None
+    except TypeError:
+        return None
 
 def subtract_from_timestamp(timestamp, minutes):
     format_str = "%Y-%m-%d %H:%M"
