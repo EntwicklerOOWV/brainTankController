@@ -18,10 +18,14 @@ class WeatherData:
     def _initialize_data(self):
         lat = user_config.latitude
         lon = user_config.longitude
+
         if lat is None and lon is None:
             return False
-    
-        url = "https://swat.itwh.de/Vorhersage?lat={}&lon={}".format(lat, lon)
+
+        testDataUrl = "https://swat.itwh.de/Vorhersage/GetVorhersageTest?lat=0&lon=0"
+        liveDataUrl = "https://swat.itwh.de/Vorhersage?lat={}&lon={}".format(lat, lon)
+
+        url = testDataUrl if lat == 0 and lon == 0 else liveDataUrl
 
         try:
             json_data = self._request_json_data(url)
@@ -32,6 +36,7 @@ class WeatherData:
             self._projected_ppt = converted_data["aktuell"][converted_data["vorhersageZeit"]]
             self._forecast = converted_data["vorhersage"]
             return True
+
         except requests.exceptions.RequestException as e:
             print("Error while fetching data:", e)
             return False
