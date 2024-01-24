@@ -22,10 +22,13 @@ class WeatherData:
         if lat is None and lon is None:
             return False
 
-        testDataUrl = "https://swat.itwh.de/Vorhersage/GetVorhersageTest?lat=0&lon=0"
-        liveDataUrl = "https://swat.itwh.de/Vorhersage?lat={}&lon={}".format(lat, lon)
+        if lat == 0 and lon == 0:
+            url = "https://swat.itwh.de/Vorhersage/GetVorhersageTest?lat=0&lon=0"
+            print("Using test data")
 
-        url = testDataUrl if lat == 0 and lon == 0 else liveDataUrl
+        else:
+            url = "https://swat.itwh.de/Vorhersage?lat={}&lon={}".format(lat, lon)
+            print("Using live data")
 
         try:
             json_data = self._request_json_data(url)

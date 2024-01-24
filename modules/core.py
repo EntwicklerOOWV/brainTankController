@@ -205,6 +205,7 @@ def send_data_to_server(weatherData, waterlevel_new, total_surface_area):
         "dachflaeche": total_surface_area,
         "gemessen": waterlevel_new,
         "entwaesserung": dashboard_config.is_draining,
+        "entwaesserungsZeit": task.drain_timestamp,
         "macAdresse": dashboard_config.mac_address,
     }
 
