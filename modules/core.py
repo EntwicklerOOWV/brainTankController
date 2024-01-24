@@ -103,7 +103,7 @@ def default_process():
                 dashboard_config.drain_advised = False
 
             # Send Measured Values to Server
-            # send_data_to_server(weatherData, waterlevel_new, total_surface_area)
+            send_data_to_server(weatherData, waterlevel_new, total_surface_area)
 
             # Set Database Values
             dbEntry.date = weatherData.date
@@ -124,7 +124,7 @@ def default_process():
         
         print("task drain stop: ", task.drain_stopped)
 
-        sleep_seconds(180)
+        sleep_seconds(300)
 
 def drain_process():
     while True:
@@ -161,32 +161,35 @@ def request_json_data(url):
         return None
 
 def find_drain_timestamp(forecast:dict):
-    values = list(forecast.values())
-    keys = list(forecast.keys())
+    try:
+        values = list(forecast.values())
+        keys = list(forecast.keys())
 
-    start_index = None
+        start_index = None
 
-    for i in range(len(values)):
-        
-        if values[i] != 0:
-            if start_index is None:
-                start_index = i
+        for i in range(len(values)):
 
-        if start_index is not None:
-            
-            timerange = int(int(automation_config.ppt_trigger_timerange)/5)
-            end_index = int(start_index)+timerange
+            if values[i] != 0:
+                if start_index is None:
+                    start_index = i
 
-            cummulated_ppt_sum = sum(values[start_index:end_index])
+            if start_index is not None:
 
-            ppt_value_exceeds = cummulated_ppt_sum > automation_config.ppt_trigger_value
-            
-            if ppt_value_exceeds:
-                drain_timestamp = subtract_from_timestamp(keys[start_index],automation_config.preemptive_drain_time)
-                return drain_timestamp
-            start_index = None
+                timerange = int(int(automation_config.ppt_trigger_timerange)/5)
+                end_index = int(start_index)+timerange
 
-    return None
+                cummulated_ppt_sum = sum(values[start_index:end_index])
+
+                ppt_value_exceeds = cummulated_ppt_sum > automation_config.ppt_trigger_value
+
+                if ppt_value_exceeds:
+                    drain_timestamp = subtract_from_timestamp(keys[start_index],automation_config.preemptive_drain_time)
+                    return drain_timestamp
+                start_index = None
+
+        return None
+    except TypeError:
+        return None
 
 def subtract_from_timestamp(timestamp, minutes):
     format_str = "%Y-%m-%d %H:%M"
@@ -201,13 +204,13 @@ def send_data_to_server(weatherData, waterlevel_new, total_surface_area):
         "lon": weatherData.longitude,
         "dachflaeche": total_surface_area,
         "gemessen": waterlevel_new,
-        "entwässerung": dashboard_config.is_draining,
+        "entwaesserung": dashboard_config.is_draining,
         "macAdresse": dashboard_config.mac_address,
     }
 
     json_data = json.dumps(data)
 
-    url = 'https://swat.itwh.de/datenApi'
+    url = 'https://swat.itwh.de/Vorhersage/PostRegentonneData'
 
     response = requests.post(url, data=json_data, headers={'Content-Type': 'application/json'})
 
