@@ -197,7 +197,7 @@ def subtract_from_timestamp(timestamp, minutes):
     new_dt = dt - timedelta(minutes=int(minutes))
     return new_dt.strftime(format_str)
 
-def send_data_to_server(weatherData, waterlevel_new, total_surface_area):
+def send_data_to_server(weatherData, waterlevel_new, total_surface_area, param_drain_timestamp):
     data = {
         "messungsZeit": weatherData.date,
         "lat": weatherData.latitude,
@@ -205,7 +205,7 @@ def send_data_to_server(weatherData, waterlevel_new, total_surface_area):
         "dachflaeche": total_surface_area,
         "gemessen": waterlevel_new,
         "entwaesserung": dashboard_config.is_draining,
-        "entwaesserungsZeit": task.drain_timestamp,
+        "entwaesserungsZeit": param_drain_timestamp,
         "macAdresse": dashboard_config.mac_address,
     }
 
