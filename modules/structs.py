@@ -36,8 +36,8 @@ class WeatherData:
             self._date = converted_data["vorhersageZeit"]
             self._latitude = converted_data["lat"]
             self._longitude = converted_data["lon"]
-            self._projected_ppt = converted_data["aktuell"][converted_data["vorhersageZeit"]]
-            self._forecast = converted_data["vorhersage"]
+            self._projected_ppt = converted_data["aktuell"][converted_data["vorhersageZeit"]]/100
+            self._forecast = self.convert_100mm_to_mm(converted_data["vorhersage"])
             return True
 
         except requests.exceptions.RequestException as e:
@@ -48,6 +48,11 @@ class WeatherData:
         response = requests.get(url)
         response.raise_for_status()
         return response.json()
+
+    def convert_100mm_to_mm(self, dict):
+        for key in dict:
+            dict[key] = dict[key] / 100
+        return dict
 
     # Function to convert a single timestamp to GMT+1
     def convert_timestamp_to_gmt1(self, timestamp):
