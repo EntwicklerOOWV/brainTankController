@@ -103,7 +103,7 @@ def default_process():
                 dashboard_config.drain_advised = False
 
             # Send Measured Values to Server
-            send_data_to_server(weatherData, waterlevel_new, total_surface_area)
+            send_data_to_server(weatherData, waterlevel_new, total_surface_area,drain_timestamp)
 
             # Set Database Values
             dbEntry.date = weatherData.date
