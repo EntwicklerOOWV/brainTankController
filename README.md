@@ -126,7 +126,7 @@ geladen werden oder alternativ auch im Browser als Archiv heruntergeladen und mi
 Raspberry Pi geladen werden.
 
 ```
-git clone https://github.com/OOWVxQF/Smartwatertank-Controller.git
+git clone https://github.com/EntwicklerOOWV/SmartWaterTankController.git
 ```
 Anschließend muss zuerst im venv Verzeichnis die Virtuelle Umgebung aktiviert werden.
 Die aktivierte Umgebung ist in der Konsole durch das Prefix *(venv)* vor dem Pfad zu erkennen.
@@ -134,7 +134,7 @@ Die aktivierte Umgebung ist in der Konsole durch das Prefix *(venv)* vor dem Pfa
 source bin/activate
 ```
 
-Anschließend müssen im Verzeichnis venv/Smartwatertank-Controller die in der *requirements.txt* Datei aufgelisteten
+Anschließend müssen im Verzeichnis venv/SmartWaterTankController die in der *requirements.txt* Datei aufgelisteten
 Bibliotheken installiert werden.
 ```
 pip install -r requirements.txt
@@ -159,7 +159,7 @@ Sollte die dort ausgegebene Adresse nicht 0x49 sein sondern zB. 0x48, muss diese
 
 #### Testen des Programms
 Um das Programm auch für den Zusammenbau der Hardware zu testen und die Konsolenausgaben direkt zu sehen, 
-kann es im Verzeichnis *venv/Smartwatertank-Contoller* wie folgt ausgeführt werden:
+kann es im Verzeichnis *venv/SmartWaterTankController* wie folgt ausgeführt werden:
 ```
 python oowvcontroller.py
 ```
@@ -172,10 +172,10 @@ Damit die Controller-Software automatisch ausgeführt wird sobald der Controller
 Zunächst muss der im Raspberry Pi Setup eingetragene Benutzername noch in beiden Verzeichnispfaden der *oowv-controller.service* Datei eingetragen werden.
 
 ```
-ExecStart=/home/<ersetzen>/venv/bin/python /home/<ersetzen>/venv/Smartwatertank-Controller/oowvcontroller.py
+ExecStart=/home/<ersetzen>/venv/bin/python /home/<ersetzen>/venv/SmartWaterTankController/oowvcontroller.py
 ```
 
-Anschließend kann die Datei aus dem Verzeichnis *venv/Smartwatertank-Controller* in das Verzeichnis */etc/systemd/system* verschoben werden.
+Anschließend kann die Datei aus dem Verzeichnis *venv/SmartWaterTankController* in das Verzeichnis */etc/systemd/system* verschoben werden.
 ```
 sudo mv oowv-controller.service /etc/systemd/system
 ```
