@@ -9,7 +9,7 @@ from waitress import serve
 
 from modules.database import db_query
 from modules.configuration import dashboard_config, user_config, automation_config
-from modules.structs import task
+from modules.structs import task,WeatherData
 
 
 app = Flask(__name__)
@@ -85,7 +85,16 @@ def get_user_config():
 @app.route('/update_user_config', methods=['POST'])
 def update_user_config():
     data = request.get_json()
+    #new location/data needs to be saved to user_config first
+    #since weatherdata requests the new location from user_config
     replace_valid_data(data, user_config)
+
+    #updates dashboardconfig weatherdata outside of default_process
+    #when updating user_config lat and lon
+    weatherData = WeatherData()
+    dashboard_config.current = weatherData.projected_ppt
+    dashboard_config.forecast = weatherData.forecast
+
     return jsonify({'message': 'Success'})
 
 @app.route('/get_automation_config')
