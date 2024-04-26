@@ -1,8 +1,10 @@
 [Unit]
 Description=OOWV Controller
+After=network.target
 
 [Service]
 Type=simple
+User=quantumfrog
 ExecStart=/home/quantumfrog/venv/bin/python /home/quantumfrog/venv/SmartWaterTankController/oowvcontroller.py
 Restart=on-failure
 
