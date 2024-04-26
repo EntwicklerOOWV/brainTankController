@@ -45,6 +45,10 @@ https://www.rekubik.de/ibc-zubehoer/adapter/s60x6-grobgewinde/ibc-adapter-s60x6-
 - Motorkugelhahnventil  
 https://www.amazon.de/dp/B07V2VX76C
 
+<br>
+
+---
+
 ## Installation
 
 #### Installation des Raspberry Pi Zero
@@ -62,6 +66,8 @@ Anschließend kann die Installation gestartet werden.
 
 <br>
 
+---
+
 #### Zugriff auf den Raspberry Pi mittels SSH Terminal
 Nach Abschluss der Installation des OS auf der SD Karte, kann diese anschließend in den Kartenslot des Raspberry gesteckt und der Raspberry mittels USB mit einem Computer oder einer anderen 5V Stromquelle verbunden werden.
 Nachdem der Raspberry erfolgreich hochgefahren ist, kann auf den Pi mittels SSH Verbindung zugegriffen werden.
@@ -75,6 +81,10 @@ ssh <benutzername>@<raspberrypi-netzwerk-ip>
 
 #### Termius
 Um mit dem Raspberry PI zu kommunizieren kann ein Service wie Termius verwendet werden. Dieser bietet eine SHH- sowie eine SFTP-Funktion um Dateien einfach auf den Raspberry Pi zu laden.
+
+<br>
+
+---
 
 #### Ändern des Netzwerks
 Falls sich nach der Installation das Netzwerk ändert, muss die SD Karte aus dem Pi entfernt und mit dem Computer verbunden werden. Im dortigen Verzeichnis muss anschließend eine Datei namens ***wpa_supplicant.conf*** mit folgendem Inhalt hinterlegt werden:
@@ -91,6 +101,8 @@ network={
 Anschließend kann der Pi mit eingelegter SD-Karte neugestartet werden.
 
 <br>
+
+---
 
 #### Installation der notwendigen Bibliotheken
 
@@ -112,6 +124,8 @@ sudo reboot
 ```
 
 <br>
+
+---
 
 #### Installation des Quellcodes auf dem Raspberry Pi Zero
 
@@ -147,6 +161,8 @@ sudo apt-get install libopenblas-dev
 
 <br>
 
+---
+
 #### Speicheraddresse des ADS1115 Moduls
 Damit der Analog-zu-Digitalwandler über den I2C Bus angesprochen werden kann, muss die Speicheraddresse des Moduls bekannt sein.
 Diese kann mittels folgendem Befehl ausgelesen werden:
@@ -157,6 +173,8 @@ Sollte die dort ausgegebene Adresse nicht 0x49 sein sondern zB. 0x48, muss diese
 
 <br>
 
+---
+
 #### Testen des Programms
 Um das Programm auch für den Zusammenbau der Hardware zu testen und die Konsolenausgaben direkt zu sehen, 
 kann es im Verzeichnis *venv/SmartWaterTankController* wie folgt ausgeführt werden:
@@ -166,33 +184,49 @@ python oowvcontroller.py
 
 <br>
 
+---
+
 #### Installation des Services
 Damit die Controller-Software automatisch ausgeführt wird sobald der Controller gestartet wird, muss ein Linux Service eingerichtet werden.
 
-Zunächst muss der im Raspberry Pi Setup eingetragene Benutzername noch in beiden Verzeichnispfaden der *oowv-controller.service* Datei eingetragen werden.
+Zunächst muss der im Raspberry Pi Setup eingetragene Benutzername noch bei User sowie den beiden Verzeichnispfaden der *oowv-controller.service* Datei ohne die Klammern ersetzt werden.
 
 ```
+User=<ersetzen>
 ExecStart=/home/<ersetzen>/venv/bin/python /home/<ersetzen>/venv/SmartWaterTankController/oowvcontroller.py
 ```
 
-Anschließend kann die Datei aus dem Verzeichnis *venv/SmartWaterTankController* in das Verzeichnis */etc/systemd/system* verschoben werden.
+Anschließend kann die Datei entweder über einen FTP-Client oder mittels folgendem Befehl aus dem Verzeichnis *venv/SmartWaterTankController* in das Verzeichnis */etc/systemd/system* verschoben werden.
 ```
 sudo mv oowv-controller.service /etc/systemd/system
 ```
+
+Damit der Service automatisch ausgeführt wird sobald der Kontroller gestartet wird, müssen folgende Befehle ausgeführt werden:
+1. Lädt die systemd Manager Konfiguration neu
+```
+sudo systemctl daemon-reload
+```
+2. Aktiviert den Service beim Hochfahren des Kontrollers
+```
+sudo systemctl enable oowv-controller.service
+```
+3. Startet den Service
+```
+sudo systemctl start oowv-controller.service
+```
+
 Mit folgenden Befehlen kann der Service anschließend gesteuert werden:
 ```
-sudo systemctl enable oowv-controller.service //Aktiviert den Service
-sudo systemctl start oowv-controller.service //Startet den Service
 sudo systemctl status oowv-controller.service //Gibt den Status des Service aus
 sudo systemctl restart oowv-controller.service //Startet den Service neu
 sudo system ctl stop oowv-controller.service //Stoppt den Service
-```
-```
 sudo journalctl -f -u oowv-controller.service //Gibt die Logausgabe des Services aus
 ```
 Anschließend kann der Controller mit der App verwendet werden.
 
 <br>
+
+---
 
 ### Aufbau der Hardware
 
@@ -223,32 +257,49 @@ Die verkabelten Komponenten in der Verteilerdose
 ![Der vollständige Controller mit Sensor und Ventil](./docs/closed-controller.png)
 Der vollständige Controller mit Sensor und Ventil
 
+<br>
+
+---
+
 #### Stromversorgung
 Wie im Schaltplan zu sehen, wird der Raspbery Pi über ein Micro USB Kabel mit Strom versorgt. 
 Dieses Kabel kann für die Entwicklung zwar an einen Laptop angeschlossen werden, 
 sobald der Controller allerdings im Freien steht, sollte der Pi entweder über ein Batteriepack 
 oder ein 5V/3A Netzteil mit Strom versorgt werden.
 
+<br>
+
+---
+
 #### Aufwärtswandler
 Um das Ventil sowie den Sensor mit 24V zu versorgen muss der Aufwärtswandler auf 5V Eingangsspannung und 24V Ausgangsspannung eingestellt werden.
 Dies geschieht durch Drehen des kleinen Rädchens auf dem Modul.
 Zur Überprüfung des Spannungsverhältnisses misst man mittels Multimeter den Spannungsabfall zwischen Eingangs- und Ausgangsspannung.
+
+<br>
+
+---
 
 #### Strom-zu-Spannungswandler
 Mittels des Spannungswandlers wird der Strom des Wassersensors in eine Spannung umgewandelt. Desweiteren kann über den Wandler ein Spannungsmaximum für den gefüllten Tank und ein Spannungsminimum für den leeren Tank eingestellt werden.
 Beim Spannungswandler geschieht dies ebenfalls über die Drehrädchen auf dem Modul. Während sich das Spannungsminimum sehr leicht simulieren lässt indem der Wassersensor nicht eingetaucht ist und somit über das ZERO Rädchen auf ein Spannungsminimum von 0V eingestellt werden kann, muss für das Spannungsmaximum der Wassersensor 1 Meter tief in Wasser eingetaucht werden. Dafür legt man den Wassersensor in ein Kunststoffrohr (HT-Rohr) und befüllt dieses auf 1 Meter mit Wasser. Anschließend kann über das SPAN Rädchen das Spannungsmaximum auf 3,3V eingestellt werden. 
 Zur Überprüfung der Spannungen empfiehlt sich hier die Verwendung eines Multimeters indem man den Spannungsabfall auf dem Spannungswandler zwischen GND und VOUT misst.
 
+<br>
+
+---
 
 #### Wassertank
 
 Nach dem Zusammenbau des Controllers kann dieser am eigentlichen Wassertank installiert werden. Dabei sollte darauf geachtet werden, dass der Controller sowie das Netzteil vor Regen geschützt und die Kabelverbindungen gut isoliert sind.
 
-![Das Motor-Ventil am Wassertank.](./docs/ventil-horizontal.png)
+![Das Motor-Ventil am Wassertank.](./docs/ventil-horizontal.png)  
 Das Motor-Ventil am Wassertank.
 
-![Der Wassertank mit Motor-Ventil und Controller](./docs/tank-front.png)
+![Der Wassertank mit Motor-Ventil und Controller](./docs/tank-front.png)  
 Der Wassertank mit Motor-Ventil und Controller
+
+---
 
 ## Acknowledgements
 
