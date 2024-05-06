@@ -110,6 +110,15 @@ class DashboardConfig(Config):
         self.save_to_file()
 
     @property
+    def current(self):
+        return self.data.get("current")
+
+    @current.setter
+    def current(self, value):
+        self.data["current"] = value
+        self.save_to_file()
+
+    @property
     def current_time(self):
         return self.data.get("current_time")
 
