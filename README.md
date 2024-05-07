@@ -97,7 +97,11 @@ ssh <benutzername>@<raspberrypi-netzwerk-ip>
 
 #### Termius
 Um mit dem Raspberry PI zu kommunizieren kann ein Service wie Termius verwendet werden. Dieser bietet eine SHH- sowie eine SFTP-Funktion um Dateien einfach auf den Raspberry Pi zu laden.
-
+Dazu muss zunächst über die Benutzeroberfläche ein entsprechender Host erstellt werden. Diesem müssen die IP des Kontrollers sowie Benutzername und ein geeigneter SSH Key hinterlegt werden.
+Anschließend kann das Verzeichnis des Raspberry direkt ausgewählt werden.
+![Erweiterte Optionen im Rasperry Pi Imager](./docs/oowv-termius.png)
+Dort können die Dateien geöffnet werden und nach abschließendem speichern auch wieder hochgeladen werden (siehe unten).  
+![Erweiterte Optionen im Rasperry Pi Imager](./docs/oowv-termius-update.png)
 <br>
 
 ---
