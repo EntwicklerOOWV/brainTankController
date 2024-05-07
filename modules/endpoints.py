@@ -259,6 +259,15 @@ def stop_drain():
     dashboard_config.is_draining = False
     return jsonify(message="Drain stopped"), 200
 
+# Endpoint to get the current Status of the Service
+@app.route('/get_service_status')
+def get_service_status():
+    service_status = "Service is running"
+    response = {
+        "status": "success",
+        "message": service_status
+    }
+    return jsonify(response), 200
 
 # Add CORS Headers to Response
 @app.after_request
