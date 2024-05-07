@@ -5,7 +5,8 @@ After=network.target
 [Service]
 Type=simple
 User=quantumfrog
-ExecStart=/home/quantumfrog/venv/bin/python /home/quantumfrog/venv/SmartWaterTankController/oowvcontroller.py
+ExecStart=/home/quantumfrog/venv/bin/python /home/quantumfrog/venv/brainTankController/oowvcontroller.py
+WorkingDirectory=/home/quantumfrog/venv/brainTankController
 Restart=on-failure
 
 [Install]
