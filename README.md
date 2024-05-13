@@ -131,6 +131,7 @@ Anschließend können die Pakete mit folgenden Befehlen aktualisiert werden. Die
 ```
 sudo apt update
 sudo apt full-upgrade
+sudo apt-get install libopenblas-dev
 ```
 Da der Analog-zu-Digitalwandler über den seriellen Kommunikationsbus I2C mit dem Raspberry kommuniziert,
 muss dieser auf dem Pi noch eingeschaltet werden.
@@ -139,7 +140,10 @@ sudo raspi-config
 ```
 Im Konfigurationsmenü navigiere zu "Interfacing Options" (Schnittstellenoptionen) und wähle "I2C".
 Bestätige die Aktivierung des I2C-Interfaces.
-Starte deinen Raspberry Pi neu, damit die Änderungen wirksam werden:
+
+![Raspberry Pi I2C aktivieren](./docs/raspi-interface-config.png)
+
+Starte den Raspberry Pi anschließend neu, damit die Änderungen wirksam werden:
 ```
 sudo reboot
 ```
@@ -173,15 +177,16 @@ Die aktivierte Umgebung ist in der Konsole durch das Prefix *(venv)* vor dem Pfa
 source bin/activate
 ```
 
-Anschließend müssen im Verzeichnis venv/brainTankController die in der *requirements.txt* Datei aufgelisteten
-Bibliotheken installiert werden. Für die folgenden Befehle muss die virtuelle Umgebung wie oben beschrieben aktiviert sein.
+Danach müssen im Verzeichnis venv/brainTankController die in der *requirements.txt* Datei aufgelisteten
+Bibliotheken installiert werden. Dafür wechselst du zunächst mit folgendem Befehl in das Verzeichnis:
+
 ```
-pip install -r requirements.txt
+cd brainTankController
 ```
 
-Falls bei der Installation der numpy Bibliothek ein Fehler auftritt, muss zuvor noch dieser Befehl ausgeführt werden.
+Anschließend können die Bibliotheken mit folgendem Befehl installiert werden. Für diesen Befehl muss die virtuelle Umgebung wie oben beschrieben aktiviert sein.
 ```
-sudo apt-get install libopenblas-dev
+pip install -r requirements.txt
 ```
 
 <br>
@@ -194,7 +199,7 @@ Diese kann mittels folgendem Befehl ausgelesen werden. Dafür muss der Kontrolle
 ```
 sudo i2cdetect -y 1
 ```
-Der dort ausgegebene Wert ist die sogenannte Speicheradresse des ADS1115 Moduls. Diese muss anschließend in die Datei *hardware.py* in Zeile 31 eingetragen werden. 
+Der dort ausgegebene Wert ist die sogenannte Speicheradresse des ADS1115 Moduls. Diese muss anschließend in die Datei *brainTankController/modules/hardware.py* in Zeile 31 eingetragen werden. 
 Überlicherweise ist der Wert 0x48 oder 0x49.
 ```
 ADS1115_ADDRESS = 0x48
