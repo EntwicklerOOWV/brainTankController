@@ -165,7 +165,11 @@ def get_daily_data():
         result = db_query(query)
         average = result[0][0] if result[0][0] is not None else 0
         data.append({'label': start_time.strftime('%H'), 'average': average})
-    
+
+    if data:
+        #removes value of last timestamp since the timestamp will be in the future
+        data.pop()
+
     return jsonify(data), 200
 
 @app.route('/get_weekly_data')
