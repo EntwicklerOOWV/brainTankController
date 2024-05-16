@@ -51,7 +51,7 @@ def default_process():
                     print("Water level validated successfully.")
                     break
                 else:
-                    retry_count += 1
+                    retry_counter += 1
                     print("Water level validation failed. Retrying in 5 seconds...")
                     time.sleep(5)
 
