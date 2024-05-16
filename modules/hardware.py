@@ -83,7 +83,7 @@ def measure_waterlevel():
     waterlevel = liters / 1000
     thread_lock.release()
 
-    waterlevel = min(waterlevel, 1.0)
+    waterlevel = max(0.0, min(waterlevel, 1.0))
 
     return round(waterlevel,2)
 
