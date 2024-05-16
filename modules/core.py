@@ -38,8 +38,22 @@ def default_process():
 
             # Get Waterlevel
             waterlevel_old = dashboard_config.waterlevel
-            waterlevel_new = measure_waterlevel()
-            print("new waterlevel:",waterlevel_new)
+
+            # Measure Waterlevel
+            max_retries = 5
+            retry_counter = 0
+            waterlevel_new = 0
+            while retry_counter < max_retries:
+                waterlevel_new = measure_waterlevel()
+                print(f"New water level measured: {waterlevel_new}")
+
+                if validate_waterlevel(waterlevel_new, waterlevel_old):
+                    print("Water level validated successfully.")
+                    break
+                else:
+                    retry_counter += 1
+                    print("Water level validation failed. Retrying in 5 seconds...")
+                    time.sleep(5)
 
             # Set Config Values
             dashboard_config.waterlevel = waterlevel_new
@@ -222,3 +236,10 @@ def send_data_to_server(weatherData, waterlevel_new, total_surface_area, param_d
         print("Failed to send data")
         print("Status Code:", response.status_code)
         print("Response:", response.text)
+
+def validate_waterlevel(new_level, old_level):
+    if new_level < 0 or new_level > 1:
+        return False
+    if abs(new_level - old_level) > 0.5:
+        return False
+    return True
