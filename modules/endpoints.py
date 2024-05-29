@@ -161,10 +161,20 @@ def get_daily_data():
     for i in range(23, -1, -1):
         start_time = current_time - timedelta(hours=i)
         end_time = current_time - timedelta(hours=i-1)
-        query = "SELECT AVG({}) AS average FROM measurements WHERE date >= '{}' AND date < '{}'".format(column_name, start_time, end_time)
-        result = db_query(query)
-        average = result[0][0] if result[0][0] is not None else 0
-        data.append({'label': start_time.strftime('%H'), 'average': average})
+
+        query = ""
+        match column_name:
+            case "waterlevel":
+                query = "SELECT AVG({}) AS average FROM measurements WHERE date >= '{}' AND date < '{}'".format(column_name, start_time, end_time)
+            case _:
+                query = "SELECT AVG({}) AS average FROM measurements WHERE date >= '{}' AND date < '{}'".format(column_name, start_time, end_time)
+
+        try:
+            result = db_query(query)
+            average = result[0][0] if result[0][0] is not None else 0
+            data.append({'label': start_time.strftime('%H'), 'average': average})
+        except Exception as e:
+            print(f"An error occurred while retrieving daily data: {e}")
 
     if data:
         #removes value of last timestamp since the timestamp will be in the future
@@ -181,11 +191,21 @@ def get_weekly_data():
     data = []
     for i in range(7):
         day = week_start + timedelta(days=i)
-        query = "SELECT AVG({}) AS average FROM measurements WHERE date >= '{}' AND date < '{}'".format(column_name, day, day + timedelta(days=1))
-        result = db_query(query)
-        average = result[0][0] if result[0][0] is not None else 0
-        german_abbreviated_day_name = format_date(day, format='E', locale=german_locale)
-        data.append({'label': german_abbreviated_day_name[:2], 'average': average})
+
+        query = ""
+        match column_name:
+            case "waterlevel":
+                query = "SELECT AVG({}) AS average FROM measurements WHERE date >= '{}' AND date < '{}'".format(column_name, day, day + timedelta(days=1))
+            case _:
+                query = "SELECT SUM({}) AS average FROM measurements WHERE date >= '{}' AND date < '{}'".format(column_name, day, day + timedelta(days=1))
+
+        try:
+            result = db_query(query)
+            average = result[0][0] if result[0][0] is not None else 0
+            german_abbreviated_day_name = format_date(day, format='E', locale=german_locale)
+            data.append({'label': german_abbreviated_day_name[:2], 'average': average})
+        except Exception as e:
+            print(f"An error occurred while retrieving weekly data: {e}")
     
     return jsonify(data), 200
 
@@ -198,11 +218,21 @@ def get_monthly_data():
     data = []
     for i in range(30):
         day = month_start + timedelta(days=i)
-        query = "SELECT AVG({}) AS average FROM measurements WHERE date >= '{}' AND date < '{}'".format(column_name, day, day + timedelta(days=1))
-        result = db_query(query)
-        average = result[0][0] if result[0][0] is not None else 0
-        day_with_month = f'{day.day}.{day.month}'
-        data.append({'label': day_with_month, 'average': average})
+
+        query = ""
+        match column_name:
+            case "waterlevel":
+                query = "SELECT AVG({}) AS average FROM measurements WHERE date >= '{}' AND date < '{}'".format(column_name, day, day + timedelta(days=1))
+            case _:
+                query = "SELECT SUM({}) AS average FROM measurements WHERE date >= '{}' AND date < '{}'".format(column_name, day, day + timedelta(days=1))
+
+        try:
+            result = db_query(query)
+            average = result[0][0] if result[0][0] is not None else 0
+            day_with_month = f'{day.day}.{day.month}'
+            data.append({'label': day_with_month, 'average': average})
+        except Exception as e:
+            print(f"An error occurred while retrieving monthly data: {e}")
     
     return jsonify(data), 200
 
@@ -224,13 +254,23 @@ def get_yearly_data():
         month_end = month_start.replace(day=1, month=month_start.month + 1) if month_start.month < 12 else month_start.replace(year=month_start.year + 1, month=1, day=1)
         
         # Perform the query to retrieve the average for the month
-        query = "SELECT AVG({}) AS average FROM measurements WHERE date >= '{}' AND date < '{}'".format(column_name, month_start, month_end)
-        result = db_query(query)
-        average = result[0][0] if result[0][0] is not None else 0
-        # Append the month and average to the data list
-        #english_month = month_start.strftime('%B')
-        german_month = format_date(month_start, format='MMMM', locale=german_locale)
-        data.append({'label': german_month, 'average': average})
+
+        query = ""
+        match column_name:
+            case "waterlevel":
+                query = "SELECT AVG({}) AS average FROM measurements WHERE date >= '{}' AND date < '{}'".format(column_name, month_start, month_end)
+            case _:
+                query = "SELECT SUM({}) AS average FROM measurements WHERE date >= '{}' AND date < '{}'".format(column_name, month_start, month_end)
+
+        try:
+            result = db_query(query)
+            average = result[0][0] if result[0][0] is not None else 0
+            # Append the month and average to the data list
+            #english_month = month_start.strftime('%B')
+            german_month = format_date(month_start, format='MMMM', locale=german_locale)
+            data.append({'label': german_month, 'average': average})
+        except Exception as e:
+            print(f"An error occurred while retrieving yearly data: {e}")
     
     return jsonify(data), 200
 
