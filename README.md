@@ -73,8 +73,8 @@ Um das Raspberry Pi OS auf dem Raspberry zu installieren empfiehlt sich der [Ras
 Als Betriebssystem sollte das Raspberry Pi OS (32-bit) ausgewählt werden und als Speichermedium die jeweilige mit dem PC verbundene SD-Karte.
 ![Erweiterte Optionen im Rasperry Pi Imager](./docs/pi-os-overview.png)
 Unter den Erweiterten Optionen (Zahnrad im oberen Bild unten rechts) müssen anschließend ein Hostname gesetzt werden sowie die SSH Option aktiviert werden und dafür Benutzername und Passwort für die Anmeldung des SSH Clients erstellt und notiert werden.
-Abschließend müssen zur Verbindung mit einem Netzwerk noch die benötigten Daten eingetragen werden.
-
+Für die Verbindung mit einem Netzwerk müssen noch die benötigten Daten eingetragen werden.
+Abschließend muss unter den Spracheinstellungen noch die Zeitzone Europe/Berlin gewählt werden.
 ![Erweiterte Optionen im Rasperry Pi Imager](./docs/pi-os-install-1.png)
 
 
