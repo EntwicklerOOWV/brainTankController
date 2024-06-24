@@ -158,9 +158,9 @@ def get_daily_data():
     column_name = request.args.get('column')
     current_time = datetime.now()
     data = []
-    for i in range(23, -1, -1):
-        start_time = current_time - timedelta(hours=i)
-        end_time = current_time - timedelta(hours=i-1)
+    for i in range(24, -1, -1):
+        start_time = current_time - timedelta(hours=i+1)
+        end_time = current_time - timedelta(hours=i)
 
         query = ""
         match column_name:
@@ -172,13 +172,9 @@ def get_daily_data():
         try:
             result = db_query(query)
             average = result[0][0] if result[0][0] is not None else 0
-            data.append({'label': start_time.strftime('%H'), 'average': average})
+            data.append({'label': end_time.strftime('%H'), 'average': average})
         except Exception as e:
             print(f"An error occurred while retrieving daily data: {e}")
-
-    if data:
-        #removes value of last timestamp since the timestamp will be in the future
-        data.pop()
 
     return jsonify(data), 200
 
