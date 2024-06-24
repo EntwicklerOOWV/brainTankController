@@ -132,13 +132,17 @@ def default_process():
             # Store Data in Database
             db_insert(dbEntry)
         else:
+            
+            waterlevel_new = measure_waterlevel()
+            dashboard_config.waterlevel = waterlevel_new
+
             print("waiting")
             print("current_timestamp: ", current_timestamp)
             print("drain_timestamp", drain_timestamp)
         
         print("task drain stop: ", task.drain_stopped)
 
-        sleep_seconds(300)
+        sleep_seconds(15)
 
 def drain_process():
     while True:
