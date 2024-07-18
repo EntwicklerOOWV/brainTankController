@@ -124,7 +124,7 @@ Anschließend kann der Pi mit eingelegter SD-Karte neugestartet werden.
 
 ---
 
-#### Installation der notwendigen Bibliotheken
+#### Aktualisierung des Raspberry Pi
 
 Um die auf dem Gerät installierten möglicherweise veralteten Pakete zu aktualisieren, muss zu nächst mittels SSH wie oben beschrieben auf den Raspberry Pi zugegriffen werden.
 Anschließend können die Pakete mit folgenden Befehlen aktualisiert werden. Dies kann einige Zeit in Anspruch nehmen. Gelegentlich muss der Forgang zb. mit der Eingabe von "y" bestätigt werden.
@@ -152,46 +152,36 @@ sudo reboot
 
 ---
 
-#### Installation des Quellcodes auf dem Raspberry Pi Zero
+#### Installation des Quellcodes auf dem Raspberry Pi
 
-Bevor der Quellcode auf dem Raspberry Pi installiert werden kann, muss zunächst im Benutzerverzeichnis 
-*/home/user* (user steht für den gewählten Benutzernamen) eine virtuelle Umgebung erstellt werden. Dafür ist erneut eine SSH Verbindung zum Raspberry Pi notwendig.  
-
-Die folgende Befehl erstellt ein virtuelles Python-Umfeld namens "venv" für dein Projekt. 
-Dies wird gemacht, um eine isolierte ("virtuelle") Umgebung zu schaffen, in der du Projekt-spezifische Abhängigkeiten verwalten kannst. 
-Dadurch verhinderst du Konflikte mit anderen Projekten und der globalen Python-Installation.
-```
-python3 -m venv venv
-```
-
-Anschließend kann der Quellcode mittels Git auf den Raspberry Pi in das *home/user/venv* Verzeichnis 
-geladen werden oder alternativ auch im Browser als Archiv heruntergeladen und mittels STFTP Client auf den 
-Raspberry Pi geladen werden.
+Um den Quellcode auf dem Raspberry Pi zu installieren muss folgender Befehl im Verzeichnis **/home/user** (user steht für den gewählten Benutzernamen) ausgeführt werden:
 
 ```
 git clone https://github.com/EntwicklerOOWV/brainTankController.git
 ```
-Anschließend muss zuerst im venv Verzeichnis die Virtuelle Umgebung aktiviert werden.
-Die aktivierte Umgebung ist in der Konsole durch das Prefix *(venv)* vor dem Pfad zu erkennen.
-```
-source bin/activate
-```
 
-Danach müssen im Verzeichnis venv/brainTankController die in der *requirements.txt* Datei aufgelisteten
-Bibliotheken installiert werden. Dafür wechselst du zunächst mit folgendem Befehl in das Verzeichnis:
+
+Anschließend dürfte das Verzeichnis brainTankController unter **/home/user/brainTankController** zu finden sein. Ist dies der Fall wechselst du anschließend mit folgenden Befehlen aus **/home/user** in das Verzeichnis wechseln und dort die Installation starten. Diese kann einige Minuten in Anspruch nehmen.
 
 ```
 cd brainTankController
+sudo chmod +x setup.sh
+sudo ./setup.sh
 ```
 
-Anschließend können die Bibliotheken mit folgendem Befehl installiert werden. Für diesen Befehl muss die virtuelle Umgebung wie oben beschrieben aktiviert sein.
+<h5>Hinweis:</h5>
+Um zu überprüfen in welchem Verzeichnis du dich aktuell befindest oder um ein Verzeichnis zurück oder in ein spezifisches Verzeichnis zu wechseln, kannst du folgende befehle verwenden
+
 ```
-pip install -r requirements.txt
+dir
+cd ..
+cd Verzeichnisname
 ```
 
 <br>
 
 ---
+
 
 #### Speicheraddresse des ADS1115 Moduls
 Damit der Analog-zu-Digitalwandler über den I2C Bus angesprochen werden kann, muss die Speicheraddresse des Moduls bekannt sein.
@@ -228,43 +218,19 @@ Das Programm kann mit der Tastenkombination *Strg + C* beendet werden.
 ---
 
 #### Installation des Services
-Damit die Controller-Software automatisch ausgeführt wird sobald der Controller gestartet wird, muss ein Linux Service eingerichtet werden.
+Damit die Controller-Software automatisch ausgeführt wird sobald der Controller gestartet wird, wurde während der Installation ein Linux Service eingerichtet. Dieser läuft im Hintergrund und startet sich bei einem Neustart des Raspberry Pi ebenfalls neu.
 
-Zunächst muss der im Raspberry Pi Setup eingetragene Benutzername noch bei User sowie den beiden Verzeichnispfaden der *oowv-controller.service* Datei ohne die Klammern ersetzt werden.
-
+Falls es im Verlauf zu Problemen kommt, kann entweder der Raspberry neugestartet werden oder der Service mit folgenden Befehlen neugestartet oder Informationen über den Status des Service ausgegeben werden.
 ```
-User=<ersetzen>
-ExecStart=/home/<ersetzen>/venv/bin/python /home/<ersetzen>/venv/brainTankController/oowvcontroller.py
-WorkingDirectory=/home/<ersetzen>/venv/brainTankController
+sudo systemctl restart oowv-controller.service
+sudo systemctl status oowv-controller.service
 ```
 
-Anschließend kann die Datei entweder über einen FTP-Client oder mittels folgendem Befehl aus dem Verzeichnis *venv/brainTankController* in das Verzeichnis */etc/systemd/system* verschoben werden.
+Mit folgenden Befehlen lässt sich der Service entweder stoppen oder die letzten Logeinträge ausgeben.
 ```
-sudo mv oowv-controller.service /etc/systemd/system
+sudo system ctl stop oowv-controller.service
+sudo journalctl -f -u oowv-controller.service
 ```
-
-Damit der Service automatisch ausgeführt wird sobald der Kontroller gestartet wird, müssen folgende Befehle ausgeführt werden:
-1. Lädt die systemd Manager Konfiguration neu
-```
-sudo systemctl daemon-reload
-```
-2. Aktiviert den Service beim Hochfahren des Kontrollers
-```
-sudo systemctl enable oowv-controller.service
-```
-3. Startet den Service
-```
-sudo systemctl start oowv-controller.service
-```
-
-Mit folgenden Befehlen kann der Service anschließend gesteuert werden:
-```
-sudo systemctl status oowv-controller.service #Gibt den Status des Service aus
-sudo systemctl restart oowv-controller.service #Startet den Service neu
-sudo system ctl stop oowv-controller.service #Stoppt den Service
-sudo journalctl -f -u oowv-controller.service #Gibt die Logausgabe des Services aus
-```
-Anschließend kann der Controller mit der App verwendet werden.
 
 <br>
 
