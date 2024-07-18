@@ -4,9 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=quantumfrog
-ExecStart=/home/quantumfrog/venv/bin/python /home/quantumfrog/venv/brainTankController/oowvcontroller.py
-WorkingDirectory=/home/quantumfrog/venv/brainTankController
+User=<ersetzen>
+ExecStart=/home/<ersetzen>/venv/bin/python /home/<ersetzen>/venv/brainTankController/oowvcontroller.py
+WorkingDirectory=/home/<ersetzen>/venv/brainTankController
 Restart=on-failure
 
 [Install]
