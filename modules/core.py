@@ -42,18 +42,15 @@ def default_process():
             # Measure Waterlevel
             max_retries = 5
             retry_counter = 0
-            waterlevel_new = 0
+            waterlevel_new = waterlevel_old
             while retry_counter < max_retries:
                 waterlevel_new = measure_waterlevel()
-                print(f"New water level measured: {waterlevel_new}")
 
                 if validate_waterlevel(waterlevel_new, waterlevel_old):
-                    print("Water level validated successfully.")
                     break
                 else:
                     retry_counter += 1
-                    print("Water level validation failed. Retrying in 5 seconds...")
-                    time.sleep(5)
+                    time.sleep(2)
 
             # Set Config Values
             dashboard_config.waterlevel = waterlevel_new
@@ -78,7 +75,8 @@ def default_process():
             except TypeError:
                 rain_volume = 0
 
-            actual_ppt_mm = (waterlevel_difference * 1000) / total_surface_area if total_surface_area > 0 else 0
+            # Calculate absolute of actual PPT if surfaces are available and the water difference is positive
+            actual_ppt_mm = abs((waterlevel_difference * 1000) / total_surface_area) if total_surface_area > 0 and stored_rain_volume > 0 else 0
             overflow_rain_volume = rain_volume if waterlevel_new >= 0.9 and weatherData.projected_ppt > 0 else 0
 
             # Set Rainday
