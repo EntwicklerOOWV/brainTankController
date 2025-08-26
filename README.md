@@ -1,6 +1,6 @@
 # OOWV b:rainTank Controller
 
-Willkommen in der Dokumentation für das OOWV b:rainTank Controller Repository. Hier erfährst du alles, was du über den Controller zur Steuerung des intelligenten Wassertanks wissen musst.
+Willkommen in der Dokumentation für das OOWV b:rainTank Controller Repository. Hier erfährst du alles, was du über den Controller zur Steuerung des intelligenten Wassertanks wissen musst. Bisherige Erfahrungsberichte zum Aufbau des b:rainTanks findest du auf der Wiki-Seite des brainTank-Repositorys: https://github.com/EntwicklerOOWV/brainTank/wiki.
 
 ## Hardware
 #### Controller
@@ -34,7 +34,8 @@ https://www.amazon.de/dp/B001JMRTTS
 - Micro USB Netzteil (Raspberry Pi 5V 3A Netzteil)  
 https://www.amazon.de/dp/B07TZ89BT7
 
-- Micro-USB Kabel (falls nicht am Netzteil fest verbaut)
+- Micro-USB Kabel (falls nicht am Netzteil fest verbaut)   
+[https://www.amazon.de/Micro-USB-Kabel](https://www.amazon.de/SIZUKA-Android-Ladekabel-Samsung-Motorola/dp/B0C8FZZB83/ref=sr_1_2_sspa?crid=18JZDVGTAZ84I&dib=eyJ2IjoiMSJ9.tgUxGIZXu7CT_CqNh4L2RK1r1yl5I0rOkRfafcormg9KoHfjh2jO4Wib_hQbTjumhHH237coBzgvvZXOLYstX28CrSNaS4T_O7NoVWbbCI5wcycZI28uM3ZritixZmINQAOWxBOTZl4UbobRky2dh08ozOaK-uQ3TYDmjiFI_eL3eJwcoxr2h2yrchai7S-vWwm-9SL5Qm2rudbFnznjCTjHOsiZERagDVsXfweXnYrZLDu--Qqnqy8KkASS55P0tunAt5FbRshVFHzxF_5gcXd1VtymJ22Owm9JmBNGyPM.8mpHCAX_ZXfaOZCFckNmbZelnXsBb9fAWRbrSEOsL5o&dib_tag=se&keywords=micro+usb+kabel&qid=1753949779&s=ce-de&sprefix=micro+usb%2Celectronics%2C104&sr=1-2-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1)
 
 - Jumperkabel und lose Kabel für längere Verbindungen  
 https://www.amazon.de/dp/B01EV70C78/
@@ -45,9 +46,16 @@ https://www.amazon.de/dp/B0BMWSN4D3/
 - Lüsterklemmen  
 https://www.amazon.de/dp/B007CWCQ74
 
-- Pins bzw. Pinleisten für ADS1115 Spannungswandler (normalerweise im Lieferumfang enthalten)
+- Pins bzw. Pinleisten für ADS1115 Spannungswandler (normalerweise im Lieferumfang enthalten)   
+[https://www.amazon.de/Lötleisten](https://www.amazon.de/ANGEEK-stiftleisten-l%C3%B6tleisten-Raspberry-Elektronik/dp/B07XM71CHT/ref=sr_1_6?__mk_de_DE=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=1NIZKREKBD7GD&dib=eyJ2IjoiMSJ9.9S4dcSq_QjxNncwZaJt6LTGATB6HTyCHZNlH-K3U1MKjFSG5gDPKuxwj0o_a8K7fWh_sl9a8gbCQpPdcils92tCTMhIzeudcdyJCuJ6ThsjvLUwPb1DUbYokasb9846YlbER7k7yX7wyWHofW2oDyqUr_6-QpjUh4uwdPd1xTChZUAcjmbo7tIkAGHSSSiv3b7JGeC_HVsf3eonbxGrutag1UxjajZcoM-LCoJ0aX9fuNQCrbff2BSirmBFQPgk63oz1sHBWKoBHG5C-kT1MyDR4wruT6BXMKE7fGVRZOOWCyiV35cn4yT0ONeYiu0NsRWTeex7SiESJyaY2z_AIYT8iwzsbDOb299MBeOrODzwQabKv0-5vV_b98eI1P4Oa87B5ES8PkZceVST_t0vUIKoWVgZR8HH0b2uVDXzdvHVrLYijlKk8ysqwMHN_Crg4.kLCXiDF3kkZJHjMRCtYEKmcrmO6StLA3hZ7uoG_QCQU&dib_tag=se&keywords=pinleiste&qid=1742462745&sprefix=pinleiste%2Caps%2C97&sr=8-6)
 
 - Schrauben/Heißkleber zur Befestigung der Komponenten
+
+- Lötkolben   
+[https://www.amazon.de/Lötkolben](https://www.amazon.de/Elektronik-Temperatur-Einstellbar-Entl%C3%B6tpumpe-L%C3%B6tkolbenst%C3%A4nder/dp/B09B3GRVTM/ref=sr_1_3?crid=3EXPYM1LJGQYR&dib=eyJ2IjoiMSJ9.abVn_XEgvMuBFGfbU5uaixAkAtnBBpki96VHzfbOMw_-0BM8_a84_T5tZ_0daC6tBkkgpbhJEc2cBZoBAFSQKlCxSotNv9Yqgd_9HFXx3u_5FZyBHiNGX4UmSGGp2UFuETklwzbtFc3VwYTTenneDQywUtyQSuqGjAlNFUQrg6ZwUEndnT03QezLOiYQ5d-0SnqpiyqXxPZ_-M42gNPY-P14BEA_h_1UpddzhviPKNA.r-qHzufBw55KadKprDmLHdEaIZMhvzJJcyZSzIBiTbo&dib_tag=se&keywords=l%C3%B6tkolben&qid=1742463362&sprefix=l%C3%B6%2Caps%2C154&sr=8-3)
+
+- Digitalmultimeter   
+https://www.amazon.de/Crenova-Automatisch-Pr%C3%BCfvorrichtung-LCD-Anzeige-Hintergrundlicht/dp/B01825GBK2
 
 #### Wassertank
 
