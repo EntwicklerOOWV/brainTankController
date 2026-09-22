@@ -5,9 +5,11 @@ import copy
 
 
 def _to_gmt1(dt_utc):
-    utc = pytz.timezone("UTC")
+    """Konvertiert ein UTC-datetime (naiv oder aware) nach GMT+1."""
     gmt1 = pytz.timezone("Europe/Paris")
-    return utc.localize(dt_utc).astimezone(gmt1)
+    if dt_utc.tzinfo is None:
+        dt_utc = pytz.utc.localize(dt_utc)
+    return dt_utc.astimezone(gmt1)
 
 
 class WeatherProvider:
@@ -41,8 +43,8 @@ class OpenWeatherMapProvider(WeatherProvider):
         response.raise_for_status()
         data = response.json()
 
-        current_gmt1 = _to_gmt1(
-            datetime.utcfromtimestamp(data["current"]["dt"]))
+        current_gmt1 = _to_gmt1(datetime.fromtimestamp(
+            data["current"]["dt"], tz=timezone.utc))
         current_ppt = data["current"].get("rain", {}).get("1h", 0.0)
 
         forecast = {}
