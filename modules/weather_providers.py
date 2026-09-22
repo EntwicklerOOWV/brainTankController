@@ -1,6 +1,7 @@
 import requests
-from datetime import datetime
+from datetime import datetime, timezone
 import pytz
+import copy
 
 
 def _to_gmt1(dt_utc):
@@ -46,7 +47,7 @@ class OpenWeatherMapProvider(WeatherProvider):
 
         forecast = {}
         for hour in data.get("hourly", []):
-            ts = _to_gmt1(datetime.utcfromtimestamp(hour["dt"]))
+            ts = _to_gmt1(datetime.fromtimestamp(hour["dt"], tz=timezone.utc))
             forecast[ts.strftime("%Y-%m-%d %H:%M")
                      ] = hour.get("rain", {}).get("1h", 0.0)
 
@@ -136,7 +137,7 @@ class ITWHProvider(WeatherProvider):
 
     def _convert_json_to_gmt1(self, input_json):
         # Apply the conversion to all timestamps in the JSON
-        converted_json = input_json.copy()
+        converted_json = copy.deepcopy(input_json)
         converted_json["vorhersageZeit"] = self._convert_timestamp_to_gmt1(
             input_json["vorhersageZeit"])
 
