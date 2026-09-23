@@ -181,7 +181,7 @@ sudo ./setup.sh
 Um zu überprüfen in welchem Verzeichnis du dich aktuell befindest oder um ein Verzeichnis zurück oder in ein spezifisches Verzeichnis zu wechseln, kannst du folgende befehle verwenden
 
 ```
-dir
+pwd
 cd ..
 cd Verzeichnisname
 ```
