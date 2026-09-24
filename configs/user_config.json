@@ -12,6 +12,6 @@
     "player_ids": [],
     "longitude": 8.1654,
     "latitude": 53.1557,
-    "weather_provider": "ITWHProvider",
+    "weather_provider": "open-meteo",
     "weather_api_key": ""
 }
