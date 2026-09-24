@@ -4,13 +4,14 @@ import pytz
 
 from modules.configuration import user_config
 
+
 class WeatherData:
     _instance = None  # Singleton instance
 
     def __new__(cls, *args, **kwargs):
         cls._instance = super().__new__(cls)
-        initResult = cls._instance._initialize_data() 
-        if(initResult == False): 
+        initResult = cls._instance._initialize_data()
+        if (initResult == False):
             return None
         else:
             return cls._instance
@@ -27,7 +28,8 @@ class WeatherData:
             print("Using test data")
 
         else:
-            url = "https://swat.itwh.de/Vorhersage?lat={}&lon={}".format(lat, lon)
+            url = "https://swat.itwh.de/Vorhersage?lat={}&lon={}".format(
+                lat, lon)
             print("Using live data")
 
         try:
@@ -37,13 +39,14 @@ class WeatherData:
             self._latitude = converted_data["lat"]
             self._longitude = converted_data["lon"]
             self._projected_ppt = converted_data["aktuell"][converted_data["vorhersageZeit"]]/100
-            self._forecast = self.convert_100mm_to_mm(converted_data["vorhersage"])
+            self._forecast = self.convert_100mm_to_mm(
+                converted_data["vorhersage"])
             return True
 
         except requests.exceptions.RequestException as e:
             print("Error while fetching data:", e)
             return False
-        
+
     def _request_json_data(self, url):
         response = requests.get(url)
         response.raise_for_status()
@@ -57,7 +60,8 @@ class WeatherData:
     # Function to convert a single timestamp to GMT+1
     def convert_timestamp_to_gmt1(self, timestamp):
         utc_timezone = pytz.timezone("UTC")
-        gmt1_timezone = pytz.timezone("Europe/Paris")  # Change to the appropriate timezone identifier
+        # Change to the appropriate timezone identifier
+        gmt1_timezone = pytz.timezone("Europe/Paris")
 
         # Convert string to datetime object
         utc_datetime = datetime.strptime(timestamp, "%Y-%m-%d %H:%M")
@@ -74,11 +78,13 @@ class WeatherData:
     def convert_json_to_gmt1(self, input_json):
         # Apply the conversion to all timestamps in the JSON
         converted_json = input_json.copy()
-        converted_json["vorhersageZeit"] = self.convert_timestamp_to_gmt1(input_json["vorhersageZeit"])
+        converted_json["vorhersageZeit"] = self.convert_timestamp_to_gmt1(
+            input_json["vorhersageZeit"])
 
         keys = list(input_json["aktuell"].keys())
         converted_key = self.convert_timestamp_to_gmt1(keys[0])
-        converted_json["aktuell"][converted_key] = input_json["aktuell"].pop(keys[0])
+        converted_json["aktuell"][converted_key] = input_json["aktuell"].pop(
+            keys[0])
 
         converted_dict = {}
 
@@ -110,6 +116,7 @@ class WeatherData:
     def forecast(self):
         return self._forecast
 
+
 class Task:
     __instance = None
 
@@ -131,13 +138,8 @@ class Task:
         else:
             self.drain_value = None
 
-    def get_task_value(self):
-        if self.task == "threshold_drain":
-            return self.drain_value
-        else:
-            return 0
-    
-    def set_drain_stopped(self,mode):
+    def set_drain_stopped(self, mode):
         self.drain_stopped = mode
+
 
 task = Task()
