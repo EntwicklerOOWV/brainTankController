@@ -1,0 +1,24 @@
+name: Unit Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test-Dependencies installieren
+        run: pip install -r requirements-dev.txt
+
+      - name: Schema-Tests ausführen
+        run: pytest -m "not integration" -v

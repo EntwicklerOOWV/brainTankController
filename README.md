@@ -212,6 +212,20 @@ Falls in der Ausgabe keine Addresse angezeigt wird, muss das Modul nochmal über
 
 <br>
 
+#### Auswahl des Wetterprognose-Providers:
+Optional kann nun zwischen dem 4 Wetter Providern gewählt werden:
+| Provider | Key |
+| -------- | -------- |
+| open-meteo| Kein Key nötig |
+| OpenWeatherMapProvider | Key nötig |
+| MeteoblueProvider| Key nötig |
+| ITWHProvider | Kein Key nötig, nur in OOWV-Verbandsgebiet |
+
+Dies kann nun unter configs/user_config.json in den Feldern *weather_provider* und *weather_api_key* angegeben werden. Zum Beispiel so:
+```
+"weather_provider": "OpenWeatherMapProvider",
+"weather_api_key": "123MeinApiKey456"
+```
 ---
 
 #### Testen des Programms

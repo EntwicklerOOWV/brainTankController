@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 
 venv
+
+/configs/user_config.json
