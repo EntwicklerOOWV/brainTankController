@@ -1,0 +1,28 @@
+name: Live API Tests
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # jeden Montag, 06:00 UTC
+  workflow_dispatch:        # zusätzlich manuell startbar über den "Actions"-Tab
+
+jobs:
+  live-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test-Dependencies installieren
+        run: pip install -r requirements-dev.txt
+
+      - name: Live-Tests ausführen
+        env:
+          OWM_ONECALL_TEST_API_KEY: ${{ secrets.OWM_ONECALL_TEST_API_KEY }}
+          METEOBLUE_TEST_API_KEY: ${{ secrets.METEOBLUE_TEST_API_KEY }}
+        run: pytest -m integration -v --tb=short

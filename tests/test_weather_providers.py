@@ -5,9 +5,10 @@ from datetime import datetime
 
 from modules.weather_providers import (
     get_provider,
-    OpenWeatherMapProvider,
+    OpenWeatherMapOneCallProvider,
     MeteoblueProvider,
     ITWHProvider,
+    OpenMeteoProvider,
     _to_gmt1,
 )
 
@@ -15,7 +16,7 @@ from modules.weather_providers import (
 # ---------- Fixtures: Beispiel-Responses der APIs ----------
 
 @pytest.fixture
-def owm_response():
+def owm_onecall_response():
     return {
         "current": {"dt": 1717000000, "rain": {"1h": 0.5}},
         "hourly": [
@@ -48,13 +49,26 @@ def itwh_response():
     }
 
 
+@pytest.fixture
+def open_meteo_response():
+    return {
+        "latitude": 53.14,
+        "longitude": 8.17,
+        "hourly": {
+            "time": ["2024-06-01T00:00", "2024-06-01T01:00", "2024-06-01T02:00"],
+            "precipitation": [0.0, 0.5, 1.2],
+        },
+    }
+
+
 # ---------- OpenWeatherMapProvider ----------
 
-class TestOpenWeatherMapProvider:
-    def test_fetch_normalizes_data(self, requests_mock, owm_response):
-        requests_mock.get(OpenWeatherMapProvider.BASE_URL, json=owm_response)
+class TestOpenWeatherMapOneCallProvider:
+    def test_fetch_normalizes_data(self, requests_mock, owm_onecall_response):
+        requests_mock.get(OpenWeatherMapOneCallProvider.BASE_URL,
+                          json=owm_onecall_response)
 
-        result = OpenWeatherMapProvider(
+        result = OpenWeatherMapOneCallProvider(
             api_key="dummy").fetch(lat=53.15, lon=8.16)
 
         assert result["latitude"] == 53.15
@@ -63,17 +77,33 @@ class TestOpenWeatherMapProvider:
         # fehlender "rain"-Key -> 0.0
         assert 0.0 in result["forecast"].values()
 
-    def test_fetch_sends_api_key_as_param(self, requests_mock, owm_response):
-        requests_mock.get(OpenWeatherMapProvider.BASE_URL, json=owm_response)
-        OpenWeatherMapProvider(api_key="my-secret").fetch(lat=1, lon=1)
+    def test_fetch_sends_api_key_and_excludes(self, requests_mock, owm_onecall_response):
+        requests_mock.get(OpenWeatherMapOneCallProvider.BASE_URL,
+                          json=owm_onecall_response)
 
-        assert requests_mock.last_request.qs["appid"] == ["my-secret"]
+        OpenWeatherMapOneCallProvider(api_key="my-secret").fetch(lat=1, lon=1)
+
+        qs = requests_mock.last_request.qs
+        assert qs["appid"] == ["my-secret"]
+        assert qs["exclude"] == ["minutely,daily,alerts"]
 
     def test_fetch_raises_on_http_error(self, requests_mock):
-        requests_mock.get(OpenWeatherMapProvider.BASE_URL, status_code=401)
+        requests_mock.get(
+            OpenWeatherMapOneCallProvider.BASE_URL, status_code=401)
 
         with pytest.raises(requests.exceptions.HTTPError):
-            OpenWeatherMapProvider(api_key="invalid").fetch(lat=1, lon=1)
+            OpenWeatherMapOneCallProvider(
+                api_key="invalid").fetch(lat=1, lon=1)
+
+    def test_fetch_error_does_not_leak_key(self, requests_mock):
+        requests_mock.get(
+            OpenWeatherMapOneCallProvider.BASE_URL, status_code=401)
+
+        with pytest.raises(requests.exceptions.HTTPError) as exc_info:
+            OpenWeatherMapOneCallProvider(
+                api_key="geheim123").fetch(lat=1, lon=1)
+
+        assert "geheim123" not in str(exc_info.value)
 
 
 # ---------- MeteoblueProvider ----------
@@ -96,7 +126,7 @@ class TestMeteoblueProvider:
 class TestITWHProvider:
     def test_fetch_converts_100mm_to_mm(self, requests_mock, itwh_response):
         requests_mock.get(
-            "https://swat.itwh.de/Vorhersage/GetVorhersageTest", json=itwh_response
+            "https://swat.itwh.de/Vorhersage", json=itwh_response
         )
         result = ITWHProvider().fetch(lat=53.15, lon=8.16)
 
@@ -112,11 +142,60 @@ class TestITWHProvider:
         assert "lat=0" in requests_mock.last_request.url
 
 
+# ---------- OpenMeteoProvider ----------
+class TestOpenMeteoProvider:
+    def test_fetch_normalizes_data(self, requests_mock, open_meteo_response):
+        requests_mock.get(OpenMeteoProvider.BASE_URL, json=open_meteo_response)
+
+        result = OpenMeteoProvider().fetch(lat=53.15, lon=8.16)
+
+        assert result["latitude"] == 53.15
+        assert result["longitude"] == 8.16
+        assert result["forecast"] == {
+            "2024-06-01 00:00": 0.0,
+            "2024-06-01 01:00": 0.5,
+            "2024-06-01 02:00": 1.2,
+        }
+        # "date" muss ein tatsächlicher Key aus dem Forecast sein,
+        # und projected_ppt muss dazu konsistent sein
+        assert result["date"] in result["forecast"]
+        assert result["projected_ppt"] == result["forecast"][result["date"]]
+
+    def test_fetch_sends_correct_params_and_no_key(self, requests_mock, open_meteo_response):
+        requests_mock.get(OpenMeteoProvider.BASE_URL, json=open_meteo_response)
+
+        OpenMeteoProvider().fetch(lat=1, lon=2)  # kein api_key nötig
+
+        qs = requests_mock.last_request.qs
+        assert qs["latitude"] == ["1"]
+        assert qs["longitude"] == ["2"]
+        assert qs["hourly"] == ["precipitation"]
+        assert "appid" not in qs
+        assert "apikey" not in qs
+
+    def test_fetch_raises_on_http_error(self, requests_mock):
+        requests_mock.get(OpenMeteoProvider.BASE_URL, status_code=400)
+
+        with pytest.raises(requests.exceptions.HTTPError):
+            OpenMeteoProvider().fetch(lat=1, lon=1)
+
+    def test_fetch_error_url_is_redacted_consistently(self, requests_mock):
+        # Open-Meteo braucht zwar keinen Key, aber die Fehlerbehandlung soll
+        # trotzdem denselben (redigierten) Format-String wie die anderen Provider nutzen
+        requests_mock.get(OpenMeteoProvider.BASE_URL, status_code=400)
+
+        with pytest.raises(requests.exceptions.HTTPError) as exc_info:
+            OpenMeteoProvider().fetch(lat=1, lon=1)
+
+        assert "400 Error for url" in str(exc_info.value)
+
+
 # ---------- get_provider() Factory ----------
 
 @pytest.mark.parametrize("name, expected_cls", [
-    ("openweathermap", OpenWeatherMapProvider),
+    ("openweathermap-onecall", OpenWeatherMapOneCallProvider),
     ("meteoblue", MeteoblueProvider),
+    ("open-meteo", OpenMeteoProvider),
     ("itwh", ITWHProvider),
 ])
 def test_get_provider_returns_correct_class(name, expected_cls):
