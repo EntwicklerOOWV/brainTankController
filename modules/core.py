@@ -8,17 +8,18 @@ from modules.database import dbEntry, db_insert
 from modules.endpoints import send_push_notifications
 from modules.hardware import threshold_drain, measure_waterlevel
 from modules.structs import WeatherData, task
+from modules.reporting import ReportingTarget, get_reporter
 
 
 def default_process():
-    
+
     drain_timestamp = None
     current_timestamp = None
     rainday = False
-    
+
     while True:
 
-        print("current task",task.current_task())
+        print("current task", task.current_task())
 
         # request Weather Data
         weatherData = WeatherData()
@@ -28,7 +29,7 @@ def default_process():
         if weatherData is None:
             sleep_seconds(10)
             continue
-        
+
         # continues if the timestamp is new (to avoid running code on the same timestamp multiple times)
         if (current_timestamp == None or weatherData.date != current_timestamp):
 
@@ -58,7 +59,7 @@ def default_process():
             dashboard_config.forecast = weatherData.forecast
             dashboard_config.is_draining = False
 
-            print("weatherData.projectedPPT",weatherData.projected_ppt)
+            print("weatherData.projectedPPT", weatherData.projected_ppt)
 
             # Calculations
             waterlevel_difference = waterlevel_new - waterlevel_old
@@ -76,7 +77,8 @@ def default_process():
                 rain_volume = 0
 
             # Calculate absolute of actual PPT if surfaces are available and the water difference is positive
-            actual_ppt_mm = abs((waterlevel_difference * 1000) / total_surface_area) if total_surface_area > 0 and stored_rain_volume > 0 else 0
+            actual_ppt_mm = abs((waterlevel_difference * 1000) /
+                                total_surface_area) if total_surface_area > 0 and stored_rain_volume > 0 else 0
             overflow_rain_volume = rain_volume if waterlevel_new >= 0.9 and weatherData.projected_ppt > 0 else 0
 
             # Set Rainday
@@ -91,22 +93,23 @@ def default_process():
 
             # determine drainage timestamp
             drain_timestamp = find_drain_timestamp(weatherData.forecast)
-            
+
             print("drain_timestamp", drain_timestamp)
 
             if current_timestamp == drain_timestamp:
-                
+
                 if dashboard_config.control_mode:
-                    #automatic mode
+                    # automatic mode
                     if not automation_config.user_notify:
-                        task.set_task("threshold_drain",automation_config.auto_drain_amount)
+                        task.set_task("threshold_drain",
+                                      automation_config.auto_drain_amount)
 
                     if automation_config.drain_request:
                         automation_config.request_send = True
                         notification_message = "Tank Entwässerung empfohlen!"
                         send_push_notifications(notification_message)
                 else:
-                    #manual mode
+                    # manual mode
                     dashboard_config.drain_advised = True
                     notification_message = "Tank Entwässerung empfohlen!"
                     send_push_notifications(notification_message)
@@ -115,39 +118,41 @@ def default_process():
                 dashboard_config.drain_advised = False
 
             # Send Measured Values to Server
-            send_data_to_server(weatherData, waterlevel_new, total_surface_area,drain_timestamp)
+            send_data_to_server(weatherData, waterlevel_new,
+                                total_surface_area, drain_timestamp)
 
             # Set Database Values
             dbEntry.date = weatherData.date
             dbEntry.projected_ppt = weatherData.projected_ppt
-            dbEntry.actual_ppt = round(actual_ppt_mm,2)
-            dbEntry.waterlevel = round(waterlevel_new,2)
-            dbEntry.stored = round(stored_rain_volume,2)
-            dbEntry.used = round(used_rain_volume,2)
-            dbEntry.overflow = round(overflow_rain_volume,2)
+            dbEntry.actual_ppt = round(actual_ppt_mm, 2)
+            dbEntry.waterlevel = round(waterlevel_new, 2)
+            dbEntry.stored = round(stored_rain_volume, 2)
+            dbEntry.used = round(used_rain_volume, 2)
+            dbEntry.overflow = round(overflow_rain_volume, 2)
             dbEntry.rainday = rainday
 
             # Store Data in Database
             db_insert(dbEntry)
         else:
-            
+
             waterlevel_new = measure_waterlevel()
             dashboard_config.waterlevel = waterlevel_new
 
             print("waiting")
             print("current_timestamp: ", current_timestamp)
             print("drain_timestamp", drain_timestamp)
-        
+
         print("task drain stop: ", task.drain_stopped)
 
         sleep_seconds(15)
+
 
 def drain_process():
     while True:
         if task.current_task() == "threshold_drain":
             print("threshold value_drain")
             threshold_drain()
-        
+
         if task.current_task() == "default" and task.drain_stopped:
             print("drain stopped in drain process")
             task.set_drain_stopped(False)
@@ -155,17 +160,20 @@ def drain_process():
 
         time.sleep(5)
 
+
 def timestamp_to_datetime(date_str):
     date_format = "%Y-%m-%d %H:%M"
     given_datetime = datetime.strptime(date_str, date_format)
     return given_datetime
 
-def sleep_seconds(seconds:int):
+
+def sleep_seconds(seconds: int):
     print("")
     print("")
     print("")
     print("")
     time.sleep(seconds)
+
 
 def request_json_data(url):
     response = requests.get(url)
@@ -176,7 +184,8 @@ def request_json_data(url):
         print("Failed to fetch JSON data")
         return None
 
-def find_drain_timestamp(forecast:dict):
+
+def find_drain_timestamp(forecast: dict):
     try:
         values = list(forecast.values())
         keys = list(forecast.keys())
@@ -199,7 +208,8 @@ def find_drain_timestamp(forecast:dict):
                 ppt_value_exceeds = cummulated_ppt_sum > automation_config.ppt_trigger_value
 
                 if ppt_value_exceeds:
-                    drain_timestamp = subtract_from_timestamp(keys[start_index],automation_config.preemptive_drain_time)
+                    drain_timestamp = subtract_from_timestamp(
+                        keys[start_index], automation_config.preemptive_drain_time)
                     return drain_timestamp
                 start_index = None
 
@@ -207,11 +217,13 @@ def find_drain_timestamp(forecast:dict):
     except TypeError:
         return None
 
+
 def subtract_from_timestamp(timestamp, minutes):
     format_str = "%Y-%m-%d %H:%M"
     dt = datetime.strptime(timestamp, format_str)
     new_dt = dt - timedelta(minutes=int(minutes))
     return new_dt.strftime(format_str)
+
 
 def send_data_to_server(weatherData, waterlevel_new, total_surface_area, param_drain_timestamp):
     data = {
@@ -224,20 +236,10 @@ def send_data_to_server(weatherData, waterlevel_new, total_surface_area, param_d
         "entwaesserungsZeit": param_drain_timestamp,
         "macAdresse": dashboard_config.mac_address,
     }
+    reporter = get_reporter()
+    reporter: ReportingTarget
+    reporter.send(data=data)
 
-    json_data = json.dumps(data)
-
-    url = 'https://swat.itwh.de/Vorhersage/PostRegentonneData'
-
-    response = requests.post(url, data=json_data, headers={'Content-Type': 'application/json'})
-
-    if response.status_code == 200:
-        print("Data sent successfully")
-        print("Response:", response.json())
-    else:
-        print("Failed to send data")
-        print("Status Code:", response.status_code)
-        print("Response:", response.text)
 
 def validate_waterlevel(new_level, old_level):
     if new_level < 0 or new_level > 1:
