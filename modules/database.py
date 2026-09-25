@@ -82,12 +82,14 @@ class DatabaseEntry:
     @property
     def rainday(self):
         return self._rainday
-    
+
     @rainday.setter
     def rainday(self, value):
         self._rainday = value
 
+
 dbEntry = DatabaseEntry()
+
 
 def db_init():
     conn = sqlite3.connect(database_name)
@@ -108,10 +110,11 @@ def db_init():
     except sqlite3.Error as e:
         print("db_init error:", e)
 
+
 def db_insert(entry):
     conn = sqlite3.connect(database_name)
     cursor = conn.cursor()
-    try: 
+    try:
         insert_query = """INSERT INTO measurements
         (date, projectedPPT, actualPPT, waterlevel, stored, used, overflow, rainday)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
@@ -132,6 +135,7 @@ def db_insert(entry):
     finally:
         conn.close()
 
+
 def db_query(query):
     conn = sqlite3.connect(database_name)
     cursor = conn.cursor()
@@ -143,4 +147,4 @@ def db_query(query):
         print("db_query error", e)
     finally:
         conn.close()
-        return result
+    return result

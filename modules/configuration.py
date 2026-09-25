@@ -8,9 +8,11 @@ modules_path = os.path.abspath(__file__)
 modules_directory = os.path.dirname(modules_path)
 configs_directory = os.path.join(modules_directory, '..', 'configs')
 
-dashboard_config_filepath = os.path.join(configs_directory, 'dashboard_config.json')
+dashboard_config_filepath = os.path.join(
+    configs_directory, 'dashboard_config.json')
 user_config_filepath = os.path.join(configs_directory, 'user_config.json')
-automation_config_filepath = os.path.join(configs_directory, 'automation_config.json')
+automation_config_filepath = os.path.join(
+    configs_directory, 'automation_config.json')
 
 
 class Singleton(type):
@@ -23,6 +25,7 @@ class Singleton(type):
                 if cls not in cls._instances:
                     cls._instances[cls] = super().__call__(*args, **kwargs)
         return cls._instances[cls]
+
 
 class Config(metaclass=Singleton):
     def __init__(self, file_path, data):
@@ -50,6 +53,7 @@ class Config(metaclass=Singleton):
 
     def get_json(self):
         return json.dumps(self.data)
+
 
 class DashboardConfig(Config):
     def __init__(self, file_path, data):
@@ -136,12 +140,14 @@ class DashboardConfig(Config):
         self.data["mac_address"] = value
         self.save_to_file()
 
+
 class UserConfig(Config):
     def __init__(self, file_path, data):
         super().__init__(file_path, data)
 
     def calculate_total_surface_area(self):
-        surfaces = self.data.get("surfaces", [])  # Get the surfaces list from self.data
+        # Get the surfaces list from self.data
+        surfaces = self.data.get("surfaces", [])
         total_size = 0
         for surface in surfaces:
             total_size += surface.get("size", 0)
@@ -159,7 +165,7 @@ class UserConfig(Config):
     @property
     def player_ids(self):
         return self.data.get("player_ids")
-    
+
     @player_ids.setter
     def player_ids(self, value):
         self.data["player_ids"].append(value)
@@ -183,6 +189,25 @@ class UserConfig(Config):
         self.data["latitude"] = value
         self.save_to_file()
 
+    @property
+    def onesignal_app_id(self):
+        return self.data.get("onesignal_app_id", "6013af88-5564-4a94-afb1-d364cb366f21")
+
+    @onesignal_app_id.setter
+    def onesignal_app_id(self, value):
+        self.data["onesignal_app_id"] = value
+        self.save_to_file()
+
+    @property
+    def onesignal_api_key(self):
+        return self.data.get("onesignal_api_key")
+
+    @onesignal_api_key.setter
+    def onesignal_api_key(self, value):
+        self.data["onesignal_api_key"] = value
+        self.save_to_file()
+
+
 class AutomationConfig(Config):
     def __init__(self, file_path, data):
         super().__init__(file_path, data)
@@ -195,7 +220,7 @@ class AutomationConfig(Config):
     def ppt_trigger_value(self, value):
         self.data["ppt_trigger_value"] = value
         self.save_to_file()
-    
+
     @property
     def ppt_trigger_timerange(self):
         return self.data.get("ppt_trigger_timerange")
@@ -208,7 +233,7 @@ class AutomationConfig(Config):
     @property
     def preemptive_drain_time(self):
         return self.data.get("preemptive_drain_time")
-    
+
     @preemptive_drain_time.setter
     def preemptive_drain_time(self, value):
         self.data["preemptive_drain_time"] = value
@@ -240,6 +265,7 @@ class AutomationConfig(Config):
     def drain_request(self, value):
         self.data["drain_request"] = value
         self.save_to_file()
+
 
 # Config Instances
 dashboard_config = DashboardConfig(dashboard_config_filepath, {})
